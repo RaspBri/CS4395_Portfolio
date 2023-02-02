@@ -21,17 +21,43 @@ class Person:
         print(self.first, self.mi, self.last)
         print(self.phone)
 
+    def update_initial(self, mi):
+        self.mi = mi
+
 def process_text(text_in):
     for i in range(len(text_in)):
         text_in[i] = text_in[i].split(",") # employee split list
+        print(text_in[i])
 
-    # fill list with Person object of employees
+    # create Person objects from employee info
     emp_info = []
     for object in text_in:
-        emp_info.append(Person(object[0].capitalize(), object[1].capitalize(), object[2], object[3], object[4]))
-    #emp_info[1].display()
+        # capitalize first, middle, last name
+        object[0] = object[0].capitalize()
+        object[1] = object[1].capitalize()
+        object[2] = object[2].capitalize()
 
+        # fix middle initial
+        if not object[2]:
+            object[2] = "X"
 
+        # fix ID
+        id_format = "[A-Za-z]{2}[0-9]{4}"
+        while not(re.match(id_format, object[3])):
+            print("Invalid ID: ", object[3])
+            print("ID is 2 letters followed by 4 digits")
+            object[3] = input("Enter valid ID: ")
+
+        #fix phone number
+        phone_format = "\d{3}-\d{3}-\d{4}"
+        while not(re.match(phone_format, object[4])):
+            print("Invalid phone#: ", object[4])
+            print("Correct format is 123-456-7890")
+            object[4] = input("Enter valid phone#: ")
+
+        emp_info.append(Person(object[0], object[1], object[2], object[3], object[4])) # save as object
+
+    emp_info[4].display()
 
 
 if __name__ == '__main__':
