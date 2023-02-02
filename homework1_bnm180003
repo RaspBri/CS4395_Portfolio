@@ -1,0 +1,51 @@
+# Assignment 1
+# /Users/brimurray/Desktop/Homework1/data/data.csv
+# System Argument: data.csv data
+import pathlib
+import sys
+import re
+import pickle
+
+employees = {}
+
+class Person:
+    def __init__(self, last, first, mi, id, phone):
+        self.id = id  # key
+        self.last = last
+        self.first = first
+        self.mi = mi
+        self.phone = phone
+
+    def display(self):
+        print("Employee ID: ", self.id)
+        print(self.first, self.mi, self.last)
+        print(self.phone)
+
+def process_text(text_in):
+    for i in range(len(text_in)):
+        text_in[i] = text_in[i].split(",") # employee split list
+
+    # fill list with Person object of employees
+    emp_info = []
+    for object in text_in:
+        emp_info.append(Person(object[0].capitalize(), object[1].capitalize(), object[2], object[3], object[4]))
+    #emp_info[1].display()
+
+
+
+
+if __name__ == '__main__':
+    filename = input("Enter your filename as a system argument: ")
+    if len(sys.argv) < 2:
+        print(sys.argv)
+        print('Please enter a valid filename as a system argument')
+        quit()
+
+    rel_path = sys.argv[1]
+    with open(pathlib.Path.cwd().joinpath(rel_path), 'r') as f:
+        text_in = f.readlines()[1:] # skip header
+        process_text(text_in)
+
+
+
+
