@@ -21,16 +21,27 @@ class Person:
         print(self.first, self.mi, self.last)
         print(self.phone)
 
-    def update_initial(self, mi):
-        self.mi = mi
+
+# Validate IDs
+def valid(ID, seen_og):
+    seen = seen_og
+    if ID not in seen:
+        seen.add(ID)
+        return True
+    else:
+        print("Must enter a unique employee ID")
+        return False
+
 
 def process_text(text_in):
+    seen = set() # set of seen IDs
+    
     for i in range(len(text_in)):
         text_in[i] = text_in[i].split(",") # employee split list
-        print(text_in[i])
+        #print(text_in[i])
 
     # create Person objects from employee info
-    emp_info = []
+
     for object in text_in:
         # capitalize first, middle, last name
         object[0] = object[0].capitalize()
@@ -43,7 +54,7 @@ def process_text(text_in):
 
         # fix ID
         id_format = "[A-Za-z]{2}[0-9]{4}"
-        while not(re.match(id_format, object[3])):
+        while not(re.match(id_format, object[3]) and valid(object[3], seen)):
             print("Invalid ID: ", object[3])
             print("ID is 2 letters followed by 4 digits")
             object[3] = input("Enter valid ID: ")
@@ -54,10 +65,11 @@ def process_text(text_in):
             print("Invalid phone#: ", object[4])
             print("Correct format is 123-456-7890")
             object[4] = input("Enter valid phone#: ")
+        
+        # save as object in dictionary based on id
+        employees[object[3]] = (Person(object[0], object[1], object[2], object[3], object[4]))
 
-        emp_info.append(Person(object[0], object[1], object[2], object[3], object[4])) # save as object
 
-    emp_info[4].display()
 
 
 if __name__ == '__main__':
@@ -72,6 +84,8 @@ if __name__ == '__main__':
         text_in = f.readlines()[1:] # skip header
         process_text(text_in)
 
+    for employee in employees:
+        employees[employee].display()
 
 
 
