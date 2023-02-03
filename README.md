@@ -7,7 +7,7 @@ You can view my first assignment as a PDF [here](Overview_of_NLP.pdf).
 ---
 
 ## Assignment 1
-Check out assignment 1 [here](Homework1.py)!
+Check out assignment 1 [here](Homework1.py)! Be sure to download Homework1's needed [data.csv](data.csv) file.
 #### Objectives
 * Code regular expressions, I/O, and pickling
 * Write a simple class in Python
