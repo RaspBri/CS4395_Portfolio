@@ -7,6 +7,7 @@ You can view my first assignment as a PDF [here](Overview_of_NLP.pdf).
 ---
 
 ## Assignment 1
+Check out assignment 1 [here](Homework1.py)!
 #### Objectives
 * Code regular expressions, I/O, and pickling
 * Write a simple class in Python
@@ -14,8 +15,13 @@ You can view my first assignment as a PDF [here](Overview_of_NLP.pdf).
 #### Summary
 This assignment reads in a file and processes the text into a standardized format in order for it to be more legible. Within the program an object class named Person is created which saves the attributes of each employee that is derived from the read file. After the text is processed and saved as an object, all Person objects are stored into a dictionary then displayed for the user. If incorrect information is given, the program will prompt the user for a correction before displaying the final results.
 #### Getting Started
-1. Open Homework.py in PyCharm
-2. Click Run Button
-3. You will be prompted by the message below to enter "data.csv data"
+1. Open Homework.py in PyCharm.
+2. Click Run Button.
+3. You will be prompted by the message below to enter "data.csv data" and click enter.
 > Enter your filename as a system argument:
-5. -
+5. Start up complete. Program should run as expected.
+#### Strengths/Weaknesses of Python for Text Processing
+* Some strengths are that Python is pretty easy to pick up and learn. Python has simple and forgiving syntax. And with it being so easy to learn alongside how powerful it is makes it quite competitive for text processing compared to other languges. Another pro is that Python can also be used to write Object Oriented programs which, depending on the project, can make a program more efficient. 
+* Some weaknesses would be that it seems to use a lot of memory. My reasoning for this comes from my experience pickling the file in this assignment. It seemed that pickling the file was only necessary because of the excess memory Python took on. Another downside is that Python is prone to runtime errors. That side of things became very apartent to me during my progress on the project.
+#### Takeaways
+During this assignment I was able to brush up on my very rusty Python knowledge and feel more comfortable with the language again. In the middle of the assignment I learned how to go from a list to an object. That was the most challenging part of the assignment for me. I also learned how to test for regular expressions in Python. That was something I had never tried before.
