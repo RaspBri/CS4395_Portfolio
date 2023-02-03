@@ -3,9 +3,9 @@
 ## Assignment 0
 This assignment is about setting up my Github portfolio and opening thoughts about natural language processing.
 You can view my first assignment as a PDF [here](Overview_of_NLP.pdf).
-
+---
 ## Assignment 1
-### Objectives
+#### Objectives
 * Code regular expressions, I/O, and pickling
 * Write a simple class in Python
 * Gain experience coding in Python
