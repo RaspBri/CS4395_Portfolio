@@ -16,8 +16,9 @@ Check out Assignment 1 [here](Homework1.py)! Be sure to download Assignment 1's 
 This assignment reads in a file and processes the text into a standardized format in order for it to be more legible. Within the program an object class named Person is created which saves the attributes of each employee that is derived from the read file. After the text is processed and saved as an object, all Person objects are stored into a dictionary then displayed for the user. If incorrect information is given, the program will prompt the user for a correction before displaying the final results.
 #### Getting Started
 1. Open Homework.py in PyCharm.
-2. Click Run Button.
-3. You will be prompted by the message below to enter "data.csv data" and click enter.
+2. Add a run/debug configuration. Set script path to the file location of this homeworks .py file. 
+3. Click Run Button.
+4. You will be prompted by the message below to enter "data.csv data" and click enter.
 > Enter your filename as a system argument:
 5. Start up complete. Program should run as expected.
 #### Strengths/Weaknesses of Python for Text Processing
