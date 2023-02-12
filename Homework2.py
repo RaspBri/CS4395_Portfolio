@@ -15,32 +15,48 @@ from nltk.stem import WordNetLemmatizer
 def calculate_diversity(raw_text):
     #tokenize raw text
     tokens = word_tokenize(raw_text)
-    print("The number of tokens in raw text ", len(tokens)) #number of tokens in list
+    #print("The number of tokens in raw text ", len(tokens)) #number of tokens in list
 
     set1 = set(tokens)
-    print("\nThe number of unique tokens in raw text:", len(set1))
+    #print("\nThe number of unique tokens in raw text:", len(set1))
 
     # remove stopwords and symbols
     tokens = [t for t in tokens if t.isalpha() and
               t not in stopwords.words('english')]
     #print(set1) # set of all unique tokens
     lex_diversity = (len(set1) / len(tokens))
-    print("\nLexical diversity: {:.0%}".format(lex_diversity))
+    #print("\nLexical diversity: {:.0%}".format(lex_diversity))
     return (tokens)
 
 def preprocessing(tokens):
     token = [t.lower() for t in tokens if (len(t) > 5)]
+    print("Preprocessed token count: ", len(token))
     wnl = WordNetLemmatizer()
     lemmas = [wnl.lemmatize(t) for t in token]
     lemmas_unique = list(set(lemmas))
-    print("\nThe number of unique lemmas: ", len(lemmas_unique))
+    #print("\nThe number of unique lemmas: ", len(lemmas_unique))
     firstTwenty = sorted(lemmas_unique)[:20]
-    print("\nThe first 20 unique tokens: ", firstTwenty)
+    #print("\nThe first 20 unique tokens: ", firstTwenty)
     firstTwenty_tagged = nltk.pos_tag(firstTwenty)
     # nouns from firstTwenty_tagged list
     nouns = [word for (word, pos) in firstTwenty_tagged if pos.startswith('N')]
+    print("Number of nouns from first twenty tokens: ", len(nouns))
+    print(token)
+    print(nouns)
 
-    print(len(nouns), " : ", nouns)
+    return token, nouns # return regular tokens or lemmatized tokens??
+
+def preprocessingResults(tokens, nouns):
+    # New line every 5 words to help prevent horizontal scrolling
+    print("\nList of tokens: ")
+    for i in range(0, len(tokens), 5):
+        print(tokens[i:i + 5])
+    print("\nList of nouns from first twenty tokens:", nouns)
+
+def create_dict(tokens, nouns):
+    # make a dictionary of counts
+    counts = {t: tokens.count(t) for t in nouns}
+    print(counts)
 
 
 if __name__ == '__main__':
@@ -54,4 +70,8 @@ if __name__ == '__main__':
         #print(text_in)
 
         tokenList = calculate_diversity(text_in)
-        preprocessing(tokenList)
+        tokens, nouns = preprocessing(tokenList)
+        #preprocessingResults(tokens, nouns)
+        #print(tokens)
+        #create_dict(tokens, nouns)
+
