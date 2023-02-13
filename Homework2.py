@@ -29,29 +29,34 @@ def calculate_diversity(raw_text):
     return (tokens)
 
 def preprocessing(tokens):
+    # tokenize lower-case raw text, reduce tokens to only alpha w/o stopwords and length > 5
     token = [t.lower() for t in tokens if (len(t) > 5)]
     print("Preprocessed token count: ", len(token))
+
+    # lemmatize the tokens
     wnl = WordNetLemmatizer()
     lemmas = [wnl.lemmatize(t) for t in token]
-    lemmas_unique = list(set(lemmas))
-    #print("\nThe number of unique lemmas: ", len(lemmas_unique))
-    firstTwenty = sorted(lemmas_unique)[:20]
-    #print("\nThe first 20 unique tokens: ", firstTwenty)
-    firstTwenty_tagged = nltk.pos_tag(firstTwenty)
-    # nouns from firstTwenty_tagged list
-    nouns = [word for (word, pos) in firstTwenty_tagged if pos.startswith('N')]
-    print("Number of nouns from first twenty tokens: ", len(nouns))
-    print(token)
-    print(nouns)
 
-    return token, nouns # return regular tokens or lemmatized tokens??
+    # use set to make list of unique tokens
+    lemmas_unique = list(set(lemmas))
+
+    # pos tagging to unique lemmas, print first twenty
+    tagged_unique = nltk.pos_tag(sorted(lemmas_unique))
+    print("\nThe first 20 unique tokens: ", (sorted(tagged_unique[:20])))
+
+    # nouns from firstTwenty_tagged list
+    nouns = [word for (word, pos) in tagged_unique if pos.startswith('N')]
+    print("Number of tokens: ", len(token))
+    print("Number of nouns: ", len(nouns))
+
+    return lemmas, nouns
 
 def preprocessingResults(tokens, nouns):
     # New line every 5 words to help prevent horizontal scrolling
     print("\nList of tokens: ")
     for i in range(0, len(tokens), 5):
         print(tokens[i:i + 5])
-    print("\nList of nouns from first twenty tokens:", nouns)
+    print("\nList of nouns:", nouns)
 
 def create_dict(tokens, nouns):
     # make a dictionary of counts
@@ -71,7 +76,7 @@ if __name__ == '__main__':
 
         tokenList = calculate_diversity(text_in)
         tokens, nouns = preprocessing(tokenList)
-        #preprocessingResults(tokens, nouns)
+        preprocessingResults(tokens, nouns)
         #print(tokens)
         #create_dict(tokens, nouns)
 
