@@ -78,16 +78,15 @@ def create_dict(tokens, nouns):
 
 # Check for letter within given word
 def match(letter, word):
-    # True / False
+    # True / False match decider
     if letter not in word:
         return False
     else:
         return True
 
 def continue_game(rand_word, score, blanks, seen):
-    # check for letter match
     user_input = input("Enter a letter: ")
-    if (match(user_input, rand_word)):
+    if (match(user_input, rand_word)): # check for letter match within seen set
         location = ([i for i, x in enumerate(rand_word) if x == user_input]) # find every location letter appears
         if user_input not in seen: # if letter not seen before
             for i in location: # replace every letter with match
@@ -96,14 +95,14 @@ def continue_game(rand_word, score, blanks, seen):
             print("Right!", " Score: ", score)
         else:
             print("Letter has already been used.")
-    else:
-        if user_input not in seen and user_input != "!":
+    else: # if no match
+        if user_input not in seen and user_input != "!": # wrong guess
             score -= 1
             print("Sorry, guess again.", " Score: ", score)
-        else:
+        else: # user wishes to end game "!"
             print("Final Score: ", score)
 
-    seen.add(user_input)
+    seen.add(user_input) # add seen letters to a seen set
 
     # Check for underscores and change user input to restart the game
     if "_" not in blanks:
@@ -120,13 +119,13 @@ def guessing_game(most_used, current_score):
     for i in rand_word: # underscore for each letter
         blanks += "_"
     print(*blanks, sep='') # print list w/o brackets or commas
-    user_input, score, seen = continue_game(rand_word, score, blanks, seen)
+    user_input, score, seen = continue_game(rand_word, score, blanks, seen) # start game
 
-    while(score >= 0 and user_input != "!" and user_input != "{}{}{"):
+    while(score >= 0 and user_input != "!" and user_input != "{}{}{"): # continue game
         user_input, score, seen = continue_game(rand_word, score, blanks, seen)
-    if (user_input == "!" or score <= -1):
+    if (user_input == "!" or score <= -1): # end game
         print("GAME OVER")
-    if (user_input == "{}{}{"):
+    if (user_input == "{}{}{"): # restart game
         guessing_game(most_used, score)
 
 
