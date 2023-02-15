@@ -34,7 +34,7 @@ def calculate_diversity(raw_text):
 # RETURN lemmas and nouns
 def preprocessing(tokens):
     token = [t.lower() for t in tokens if (len(t) > 5)]
-    print("Preprocessed token count: ", len(token))
+    #print("Preprocessed token count: ", len(token))
 
     # lemmatize the tokens
     wnl = WordNetLemmatizer()
@@ -45,7 +45,7 @@ def preprocessing(tokens):
 
     # pos tagging to unique lemmas, print first twenty
     tagged_unique = nltk.pos_tag(sorted(lemmas_unique))
-    print("\nThe first 20 unique tokens: ", (sorted(tagged_unique[:20])))
+    print("The first 20 unique tokens: ", (sorted(tagged_unique[:20])))
 
     # nouns from firstTwenty_tagged list
     nouns = [word for (word, pos) in tagged_unique if pos.startswith('N')]
@@ -140,7 +140,7 @@ if __name__ == '__main__':
 
         tokenList = calculate_diversity(text_in) # get list of tokenized words
         tokens, nouns = preprocessing(tokenList) # get preprocessed text and nouns
-        preprocessingResults(tokens, nouns) # print preprocessing results
+        #preprocessingResults(tokens, nouns) # print preprocessing results
         most_used = create_dict(tokens, nouns) # get most used tokenized words
 
         print("Word Guessing Game")
