@@ -5,13 +5,16 @@ from nltk import word_tokenize, pos_tag
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import random
+# Might need to download these
 #nltk.download('wordnet')
 #nltk.download('punkt')
 #SENT_DETECTOR = nltk.data.load('tokenizers/punkt/english.pickle')
 #nltk.download('averaged_perceptron_tagger')
 
-# In PyCharm had to create configuration with "anat19.txt" parameter
-# and added the interpreter option -s for the file to be read
+# In PyCharm you must create configuration with "anat19.txt" parameter
+# and add the interpreter option -s for the file to be read
+# Be sure to set script path to homework2_bnm180003.py file
+# and have .txt file in same folder, not sub folder
 
 # Lexical diversity of the tokenized text and output is formatted to 2 decimal places
 # Number of unique tokens divided by the total number of tokens
@@ -84,6 +87,8 @@ def match(letter, word):
     else:
         return True
 
+# Continue guessing game by prompting user for new letter
+# and replacing _ if letter matches. Maintain seen set, and check for a win
 def continue_game(rand_word, score, blanks, seen):
     user_input = input("Enter a letter: ")
     if (match(user_input, rand_word)): # check for letter match within seen set
@@ -111,6 +116,8 @@ def continue_game(rand_word, score, blanks, seen):
     print(*blanks, sep='') # remove brackets and commas from list
     return user_input, score, seen
 
+# Create guessing game by selecting a random word to guess,
+# printing _ for each letter, and setting start game parameters
 def guessing_game(most_used, current_score):
     score = current_score
     blanks = []
