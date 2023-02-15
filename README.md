@@ -26,3 +26,6 @@ This assignment reads in a file and processes the text into a standardized forma
 * Some weaknesses would be that it seems to use a lot of memory. My reasoning for this comes from my experience pickling the file in this assignment. It seemed that pickling the file was only necessary because of the excess memory Python took on. Another downside is that Python is prone to runtime errors. That side of things became very apartent to me during my progress on the project.
 #### Takeaways
 During this assignment I was able to brush up on my very rusty Python knowledge and feel more comfortable with the language again. In the middle of the assignment I learned how to go from a list to an object. That was the most challenging part of the assignment for me. I also learned how to test for regular expressions in Python. That was something I had never tried before.
+
+## Assignment 2
+Check out Assignment 2 [here](Homework2.py)! Be sure to download Assignment 1's necessary [anat19.txt](Data_Files/anat19.txt) file.
