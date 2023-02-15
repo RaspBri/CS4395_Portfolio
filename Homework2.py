@@ -88,40 +88,47 @@ def continue_game(rand_word, score, blanks, seen):
     # check for letter match
     user_input = input("Enter a letter: ")
     if (match(user_input, rand_word)):
-        location = rand_word.find(user_input)
-        if user_input not in seen:
-            blanks[location] = user_input
+        location = ([i for i, x in enumerate(rand_word) if x == user_input]) # find every location letter appears
+        if user_input not in seen: # if letter not seen before
+            for i in location: # replace every letter with match
+                blanks[i] = user_input
             score += 1
-            print("Right!", "\nScore:", score)
+            print("Right!", " Score: ", score)
         else:
             print("Letter has already been used.")
     else:
-        if user_input not in seen:
+        if user_input not in seen and user_input != "!":
             score -= 1
-            print("Sorry, guess again.", "\nScore:", score)
+            print("Sorry, guess again.", " Score: ", score)
+        else:
+            print("Final Score: ", score)
 
     seen.add(user_input)
 
-    if rand_word in seen:
+    # Check for underscores and change user input to restart the game
+    if "_" not in blanks:
         print("You Win!")
-    print(*blanks, sep='')
+        user_input = "{}{}{" # restart game
+    print(*blanks, sep='') # remove brackets and commas from list
     return user_input, score, seen
 
-def guessing_game(most_used):
-    score = 5
+def guessing_game(most_used, current_score):
+    score = current_score
     blanks = []
     seen = set() # set of seen letters
     rand_word = (random.sample(most_used, 1)[0][0]) # get random word from dictionary w/o count #
-    print(rand_word)
     for i in rand_word: # underscore for each letter
-        blanks += "_ "
+        blanks += "_"
     print(*blanks, sep='') # print list w/o brackets or commas
     user_input, score, seen = continue_game(rand_word, score, blanks, seen)
 
-    while(score >= 0 and user_input != "!"):
+    while(score >= 0 and user_input != "!" and user_input != "{}{}{"):
         user_input, score, seen = continue_game(rand_word, score, blanks, seen)
     if (user_input == "!" or score <= -1):
         print("GAME OVER")
+    if (user_input == "{}{}{"):
+        guessing_game(most_used, score)
+
 
 if __name__ == '__main__':
     #filename = input("Enter filename: ")
@@ -138,5 +145,5 @@ if __name__ == '__main__':
         most_used = create_dict(tokens, nouns) # get most used tokenized words
 
         print("Word Guessing Game")
-        guessing_game(most_used)
+        guessing_game(most_used, 5) # 5 is the starting score
 
