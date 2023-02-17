@@ -23,10 +23,6 @@ def calculate_diversity(raw_text):
     #tokenize raw text
     tokens = word_tokenize(raw_text)
     set1 = set(tokens) # get only unique tokens
-
-    # remove stopwords and symbols
-    tokens = [t for t in tokens if t.isalpha() and
-              t not in stopwords.words('english')]
     lex_diversity = (len(set1) / len(tokens))
     print("\nLexical diversity: {:.0%}".format(lex_diversity))
     return (tokens)
@@ -36,7 +32,9 @@ def calculate_diversity(raw_text):
 # lemmatize tokens into list of unique tokens and tag them, then find nouns
 # RETURN lemmas and nouns
 def preprocessing(tokens):
-    token = [t.lower() for t in tokens if (len(t) > 5)]
+    # remove stopwords and symbols
+    token = [t for t in tokens if t.isalpha() and t.lower() and
+              t not in stopwords.words('english') if (len(t) > 5)]
     #print("Preprocessed token count: ", len(token))
 
     # lemmatize the tokens
