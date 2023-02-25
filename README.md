@@ -29,3 +29,6 @@ During this assignment I was able to brush up on my very rusty Python knowledge 
 
 ## Assignment 2
 Check out Assignment 2 [here](Homework2.py)! Be sure to download Assignment 1's necessary [anat19.txt](Data_Files/anat19.txt) file.
+
+## Assignment 3
+Check out Assignment 3 [here](WordNet.ipynb)! No extra data files needed.
