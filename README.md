@@ -34,7 +34,7 @@ Check out Assignment 2 [here](Homework2.py)! Be sure to download Assignment 1's 
 Check out Assignment 3 [here](WordNet.ipynb)! No extra data files needed.
 
 ## Assignment 4
-Check out Assignment 4 [here](N_Gram/NGram Narrative.pdf)! The code needed to run the project can be found [here](N_Gram/program1.py) and [here](N_Gram/program2.py)! 
+Check out Assignment 4 [here](N_Gram/NGram_Narrative.pdf)! The code needed to run the project can be found [here](N_Gram/program1.py) and [here](N_Gram/program2.py)! 
 
 ## Assignment 5
 Check out Assignment 5 [here](HW-HLT.pdf).
