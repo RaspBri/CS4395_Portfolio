@@ -32,3 +32,6 @@ Check out Assignment 2 [here](Homework2.py)! Be sure to download Assignment 1's 
 
 ## Assignment 3
 Check out Assignment 3 [here](WordNet.ipynb)! No extra data files needed.
+
+## Assignment 5
+Check out Assignment 5 [here](HW-HLT.pdf).
