@@ -5,6 +5,8 @@ from nltk import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 from nltk.probability import FreqDist
 from collections import Counter
+import ast
+import json
 
 def scrapeText(URL, count):
     page = requests.get(URL)
@@ -46,11 +48,14 @@ def tokenizeWords():
                   t not in stopwords.words('english')]
         #print(tokens)
         outFile = open(('link' + str(i) + 'tokens.txt'), "w")
-        outFile.write(str(tokens)) # write string of tokens to .txt file
+        for item in tokens:
+            outFile.write(item + "\n") # write string of tokens to .txt file
 
-def findTermFreq(i, dict):
+def findTermFreq():
     for i in range(1, 15):
-        outFile = open(('link' + str(i) + 'tokens.txt'), "r")
+        file = open(('link' + str(i) + 'tokens.txt'), "r")
+        for items in file:
+            print(items) # print all words in file
 
 
 
@@ -80,3 +85,4 @@ if __name__ == '__main__':
     cleanText() # remove newlines
     tokenizeSentences() # make everything lowercase
     tokenizeWords() # remove stopwords & punctuation
+    findTermFreq()
