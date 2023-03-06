@@ -46,7 +46,9 @@ def tokenizeWords():
         # tokenize words by removing stop words, punctuation, and lowercase everything
         tokens = [t for t in tokens if t.isalpha() and t.lower() and
                   t not in stopwords.words('english')]
-        #print(tokens)
+        
+        """ Surprising how few words made it through to be saved into the .txt file """
+        
         outFile = open(('link' + str(i) + 'tokens.txt'), "w")
         for item in tokens:
             outFile.write(item + "\n") # write string of tokens to .txt file
