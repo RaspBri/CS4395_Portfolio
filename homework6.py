@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import nltk
 from nltk import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
+from nltk.probability import FreqDist
+from collections import Counter
 
 def scrapeText(URL, count):
     page = requests.get(URL)
@@ -37,17 +39,19 @@ def tokenizeSentences():
 
 def tokenizeWords():
     for i in range(1, 15):
-        file = open('link' + str(i) + 'tokens.txt').read()
-        tokens = word_tokenize(file)
+        file = open('link' + str(i) + 'tokens.txt').read() # read sentences in as tokens
+        tokens = word_tokenize(file) # break up sentences into tokens of words
         # tokenize words by removing stop words, punctuation, and lowercase everything
         tokens = [t for t in tokens if t.isalpha() and t.lower() and
                   t not in stopwords.words('english')]
         #print(tokens)
         outFile = open(('link' + str(i) + 'tokens.txt'), "w")
-        outFile.writelines(tokens)
+        outFile.write(str(tokens)) # write string of tokens to .txt file
 
-def findTerms():
-    print("here")
+def findTermFreq(i, dict):
+    for i in range(1, 15):
+        outFile = open(('link' + str(i) + 'tokens.txt'), "r")
+
 
 
 if __name__ == '__main__':
