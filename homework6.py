@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import nltk
 from nltk import word_tokenize, sent_tokenize
+from nltk.corpus import stopwords
 
 def scrapeText(URL, count):
     page = requests.get(URL)
@@ -14,6 +15,7 @@ def scrapeText(URL, count):
 
 
 def cleanText():
+    # remove newlines
     text_no_line_breaks = ''
     for i in range(1, 15):
         file = open('link' + str(i) + '.txt')
@@ -25,14 +27,27 @@ def cleanText():
 def tokenizeSentences():
     for i in range(1, 15):
         file = open('link' + str(i) + '.txt').read()
-        tokens = sent_tokenize(file)
+        # tokenize sentences and lowercase
+        tokens = sent_tokenize(file.lower())
+        # write tokens to new file
         outFile = open(('link' + str(i) + 'tokens.txt'), "w")
         #print(tokens)
         outFile.writelines(tokens)
 
 
+def tokenizeWords():
+    for i in range(1, 15):
+        file = open('link' + str(i) + 'tokens.txt').read()
+        tokens = word_tokenize(file)
+        # tokenize words by removing stop words, punctuation, and lowercase everything
+        tokens = [t for t in tokens if t.isalpha() and t.lower() and
+                  t not in stopwords.words('english')]
+        #print(tokens)
+        outFile = open(('link' + str(i) + 'tokens.txt'), "w")
+        outFile.writelines(tokens)
+
 def findTerms():
-    
+    print("here")
 
 
 if __name__ == '__main__':
@@ -58,6 +73,6 @@ if __name__ == '__main__':
             break
         scrapeText(link.get('href'), counter)
 
-    cleanText()
-    tokenizeSentences()
-    
+    cleanText() # remove newlines
+    tokenizeSentences() # make everything lowercase
+    tokenizeWords() # remove stopwords & punctuation
