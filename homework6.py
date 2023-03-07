@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 import nltk
 from nltk import word_tokenize, sent_tokenize, ngrams, FreqDist
 from nltk.corpus import stopwords
-from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.stem import WordNetLemmatizer
 from collections import Counter
 
@@ -74,16 +73,16 @@ def findTermFreq():
         for word in tfDict.keys():
             tfDict[word] = tfDict[word] / len(tokens)
 
-        print(tfDict.values()) # print entire range of dict values for terms
+        #print(tfDict.values()) # print entire range of dict values for terms
 
 
 def findInverseDocFreq():
+    idfDict = {}
+    listDict = []
     for i in range(1, 15):
         with open(('link' + str(i) + 'tokens.txt'), "r") as f:
-            text = f.read()
-        tfidf = TfidVectorizer()
-        for ele1, ele2 in zip(tfidf.get_feature_names(), tfidf.idf_):
-            print(ele1, ':', ele2)
+            listDict.append(f.read())
+    print(listDict[5])
 
 
 if __name__ == '__main__':
