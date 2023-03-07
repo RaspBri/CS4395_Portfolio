@@ -103,31 +103,18 @@ def findInverseDocFreq(tfDict, vocList):
 
 
 def create_tfidf(tf, idf):
-    #print(tf) # list of dictionaries from each file
-    #print(idf) # single dictionary all unique words
-    #print((tf[3]).keys())
-    #print(list(tf[5].values())[5])
-    #print(list(idf.values())[6])
+    #print(tf) # dictionary from file
+    #print(idf) # single dictionary all unique words from every file
     tf_idf = {}
-    #print(type(list((tf[4]).values())[5]))
-    #print(((list(idf.values())[4])))
-    #for i in range(1, 15): # go through all files
     for t in tf.keys():
        tf_idf[t] = tf[t] * idf[t]
-    print(tf_idf)
-    term_weight = sorted(tf.items(), key = lambda x:x[1], reverse = True)
-    print(term_weight)
-   #for tf_dict in tf: # go through all dictionaries in tf
-        #for x in range(len(tf_dict.keys())): # go through all values in dictionary
-            #tf_idf[t] = (list((tf[t]).values())[x]) * (list(idf.values())[x])
-            #print("tf ::: ", tf[x])
-           # print("idf ::: ", idf)
-            #print(type((list(idf.values())[x])))
-            #print(tf_idf[t])
-
-
-            
     #print(tf_idf)
+    term_weight = sorted(tf.items(), key = lambda x:x[1], reverse = True)
+    #print(term_weight)
+    #print(len(term_weight))
+    #print(len(tf_idf))
+    print(len(tf_idf))
+    return tf_idf
 
 
 if __name__ == '__main__':
@@ -158,4 +145,5 @@ if __name__ == '__main__':
     vocList = tokenizeWords() # remove stopwords & punctuation, return list of unique words
     tfDict = findTermFreq()
     idfDict = findInverseDocFreq(tfDict, vocList) # return idfDict
-    create_tfidf(tfDict[1], idfDict)
+    for i in range(len(tfDict)):
+        print(create_tfidf(tfDict[i], idfDict))
