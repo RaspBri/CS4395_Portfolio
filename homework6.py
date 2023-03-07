@@ -112,11 +112,13 @@ def create_tfidf(tf, idf):
     tf_idf = {}
     #print(type(list((tf[4]).values())[5]))
     #print(((list(idf.values())[4])))
-    for i in range(15): # go through all files
-        for t in (tf[i]): # go through all dictionaries in tf
-            for x in (tf[i]).values(): # go through all values in dictionary
-                tf_idf[t] = (list((tf[t]).values())[x]) * (list(idf.values())[x])
-            print(tf_idf[t])
+    #for i in range(1, 15): # go through all files
+    for tf_dict in tf: # go through all dictionaries in tf
+        for x in tf_dict.keys(): # go through all values in dictionary
+            #tf_idf[t] = (list((tf[t]).values())[x]) * (list(idf.values())[x])
+            print(list((tf[x]).values())[4])
+            #print(type((list(idf.values())[x])))
+            #print(tf_idf[t])
             
     #print(tf_idf)
 
