@@ -79,19 +79,46 @@ def findTermFreq():
         for word in tfDict.keys():
             tfDict[word] = tfDict[word] / len(tokens)
 
-        listDict.append(tfDict)
+        listDict.append(tfDict) # add to list for each file
         #print(list(tfDict.values())[2])
         #print(tfDict.values()) # print entire range of dict values for terms
-
     return listDict
 
 
-def findInverseDocFreq(tfDict):
-    allVoc = []
+def findInverseDocFreq(tfDict, vocList):
+    urlVoc = []
+    idfDict = {}
+
+    # take list of words from each dict in tfDict and put into list
     for item in tfDict:
-        allVoc.append(item.keys())
+        urlVoc.append(item.keys())
 
     #for term in allVoc
+    for term in vocList:
+        temp = ['x' for voc in urlVoc if term in voc]
+        idfDict[term] = math.log((1 + 14) / (1 + len(temp)))
+        #print(idfDict[term])
+    #print(idfDict)
+    return idfDict
+
+
+def create_tfidf(tf, idf):
+    #print(tf) # list of dictionaries from each file
+    #print(idf) # single dictionary all unique words
+    #tf_idf = {key: tf[key] * idf.get(key, 0) for key in tf}
+    #print((tf[3]).keys())
+    #print(list(tf[5].values())[5])
+    #print(list(idf.values())[6])
+    tf_idf = {}
+    #print(type(list((tf[4]).values())[5]))
+    #print(((list(idf.values())[4])))
+    for i in range(15): # go through all files
+        for t in (tf[i]): # go through all dictionaries in tf
+            for x in (tf[i]).values(): # go through all values in dictionary
+                tf_idf[t] = (list((tf[t]).values())[x]) * (list(idf.values())[x])
+            print(tf_idf[t])
+            
+    #print(tf_idf)
 
 
 if __name__ == '__main__':
@@ -119,6 +146,7 @@ if __name__ == '__main__':
 
     cleanText() # remove newlines
     tokenizeSentences() # make everything lowercase
-    tokenizeWords() # remove stopwords & punctuation
+    vocList = tokenizeWords() # remove stopwords & punctuation, return list of unique words
     tfDict = findTermFreq()
-    #findInverseDocFreq(tfDict)
+    idfDict = findInverseDocFreq(tfDict, vocList) # return idfDict
+    create_tfidf(tfDict, idfDict)
