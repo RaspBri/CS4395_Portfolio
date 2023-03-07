@@ -39,12 +39,15 @@ def tokenizeSentences():
 
 
 def tokenizeWords():
+    wordList = []
     for i in range(1, 15):
         file = open('link' + str(i) + 'tokens.txt').read() # read sentences in as tokens
         tokens = word_tokenize(file) # break up sentences into tokens of words
         # tokenize words by removing stop words, punctuation, and lowercase everything
         tokens = [t for t in tokens if t.isalpha() and t.lower() and
                   t not in stopwords.words('english')]
+        for t in tokens:
+            wordList.append(t)
 
         """ Surprising how few words made it through to be saved into the .txt file """
 
@@ -53,10 +56,13 @@ def tokenizeWords():
             outFile.write(item) # write string of tokens to .txt file
             outFile.write("\n")
 
+    wordList = list(set(wordList))
+    return wordList
+
 def findTermFreq():
+    listDict = []
     for i in range(1, 15):
         tfDict = {}
-
         # read all strings from file
         with open(('link' + str(i) + 'tokens.txt'), "r") as f:
             text = f.read()
@@ -73,16 +79,19 @@ def findTermFreq():
         for word in tfDict.keys():
             tfDict[word] = tfDict[word] / len(tokens)
 
+        listDict.append(tfDict)
+        #print(list(tfDict.values())[2])
         #print(tfDict.values()) # print entire range of dict values for terms
 
+    return listDict
 
-def findInverseDocFreq():
-    idfDict = {}
-    listDict = []
-    for i in range(1, 15):
-        with open(('link' + str(i) + 'tokens.txt'), "r") as f:
-            listDict.append(f.read())
-    print(listDict[5])
+
+def findInverseDocFreq(tfDict):
+    allVoc = []
+    for item in tfDict:
+        allVoc.append(item.keys())
+
+    #for term in allVoc
 
 
 if __name__ == '__main__':
@@ -111,5 +120,5 @@ if __name__ == '__main__':
     cleanText() # remove newlines
     tokenizeSentences() # make everything lowercase
     tokenizeWords() # remove stopwords & punctuation
-    findTermFreq()
-    findInverseDocFreq()
+    tfDict = findTermFreq()
+    #findInverseDocFreq(tfDict)
