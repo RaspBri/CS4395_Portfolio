@@ -1,12 +1,12 @@
 import requests
+import math
 from bs4 import BeautifulSoup
 import nltk
-from nltk import word_tokenize, sent_tokenize
+from nltk import word_tokenize, sent_tokenize, ngrams, FreqDist
 from nltk.corpus import stopwords
-from nltk.probability import FreqDist
+from sklearn.feature_extraction.text import TfidfVectorizer
+from nltk.stem import WordNetLemmatizer
 from collections import Counter
-import ast
-import json
 
 def scrapeText(URL, count):
     page = requests.get(URL)
@@ -46,19 +46,44 @@ def tokenizeWords():
         # tokenize words by removing stop words, punctuation, and lowercase everything
         tokens = [t for t in tokens if t.isalpha() and t.lower() and
                   t not in stopwords.words('english')]
-        
+
         """ Surprising how few words made it through to be saved into the .txt file """
-        
+
         outFile = open(('link' + str(i) + 'tokens.txt'), "w")
         for item in tokens:
-            outFile.write(item + "\n") # write string of tokens to .txt file
+            outFile.write(item) # write string of tokens to .txt file
+            outFile.write("\n")
 
 def findTermFreq():
     for i in range(1, 15):
-        file = open(('link' + str(i) + 'tokens.txt'), "r")
-        for items in file:
-            print(items) # print all words in file
+        tfDict = {}
 
+        # read all strings from file
+        with open(('link' + str(i) + 'tokens.txt'), "r") as f:
+            text = f.read()
+        tokens = word_tokenize(text) # tokenize text from each file
+
+        # go through all tokens and calculate term frequency for each word
+        for word in tokens:
+            if word in tfDict:
+               tfDict[word] += 1
+            else:
+                tfDict[word] = 1
+
+        # normalize the term frequency by number of tokens
+        for word in tfDict.keys():
+            tfDict[word] = tfDict[word] / len(tokens)
+
+        print(tfDict.values()) # print entire range of dict values for terms
+
+
+def findInverseDocFreq():
+    for i in range(1, 15):
+        with open(('link' + str(i) + 'tokens.txt'), "r") as f:
+            text = f.read()
+        tfidf = TfidVectorizer()
+        for ele1, ele2 in zip(tfidf.get_feature_names(), tfidf.idf_):
+            print(ele1, ':', ele2)
 
 
 if __name__ == '__main__':
@@ -88,3 +113,4 @@ if __name__ == '__main__':
     tokenizeSentences() # make everything lowercase
     tokenizeWords() # remove stopwords & punctuation
     findTermFreq()
+    findInverseDocFreq()
