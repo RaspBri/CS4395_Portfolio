@@ -163,16 +163,17 @@ if __name__ == '__main__':
     
     knowledgeBase = {
         'tulips': ['Tulips come in many colors such as: purple, red, orange, yellow, white, and pink', 
-                 'Tulip Care: Cut stems and place in fresh water'],
-        'dallas': ,
-        'texas': ,
-        'season': ,
+                 'Tulip Care: Cut stems and place in fresh water', 'Types of tulips on the grounds: 100 varieties of tulips'],
+        'dallas': ['Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258'],
+        'texas': ['Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258'],
+        'season': ['Open Season: During end of winter and early spring'],
         'contact': ['Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258', 
                   'Email: info@texas-tulips.com', 'Phone: 940-440-0232'],
-        'february': ,
-        'april': ,
-        'visit': ,
-        'times': , 
-        'pay': ['Accepted forms of payment: Visa, MasterCard, and Cash'], 
-        'parking': 
+        'february': ['Open Season: During end of winter and early spring'],
+        'april': ['Open Season: During end of winter and early spring', 'End Season: Mid April'],
+        'visit': ['Hours: 10AM - 8PM Everyday', 'Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258'] ,
+        'times': ['Hours: 10AM - 8PM Everyday'], 
+        'pay': ['Entrance Fee: $5/person', 'Discounts for Veterans and Seniors: $7.50/person (includes three tulips & only during the week on business days)', 
+                'Accepted forms of payment: Visa, MasterCard, and Cash'], 
+        'parking': ['Parking Fee: FREE'] 
     }
