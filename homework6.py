@@ -152,5 +152,6 @@ if __name__ == '__main__':
     # iterate through all term freq dicts for each page
     for i in range(len(tfDict)):
         tf_idf, termWeights = create_tfidf(tfDict[i], idfDict) # tf-idf value
-        print(tf_idf) # print all terms from each page
-        print(termWeights[:25]) # print top 25 words from page
+        #print(tf_idf) # print all terms from each page
+        # print top 25 words from page
+        print(termWeights[:25])
