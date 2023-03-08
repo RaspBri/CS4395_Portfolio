@@ -160,3 +160,19 @@ if __name__ == '__main__':
     tulips, dallas, texas, season, contact,
     february, april, visit, times, pay, parking
     """
+    
+    knowledgeBase = {
+        'tulips': ['Tulips come in many colors such as: purple, red, orange, yellow, white, and pink', 
+                 'Tulip Care: Cut stems and place in fresh water'],
+        'dallas': ,
+        'texas': ,
+        'season': ,
+        'contact': ['Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258', 
+                  'Email: info@texas-tulips.com', 'Phone: 940-440-0232'],
+        'february': ,
+        'april': ,
+        'visit': ,
+        'times': , 
+        'pay': ['Accepted forms of payment: Visa, MasterCard, and Cash'], 
+        'parking': 
+    }
