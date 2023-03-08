@@ -7,6 +7,12 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 from collections import Counter
 
+""" 
+            MUST HAVE FEW LINKS FROM OUTSIDE THE DOMAIN (GO FOR SOCIAL MEDIA PAGES)
+            - maybe global variable for the range?
+            - update all variableLikeThis to variable_like_this
+"""
+
 def scrapeText(URL, count):
     page = requests.get(URL)
     soup = BeautifulSoup(page.content, 'html.parser')
@@ -79,7 +85,7 @@ def findTermFreq():
         for word in tfDict.keys():
             tfDict[word] = tfDict[word] / len(tokens)
 
-        listDict.append(tfDict) # add to list for each file
+        listDict.append(tfDict) # add to list for each page
         #print(list(tfDict.values())[2])
         #print(tfDict.values()) # print entire range of dict values for terms
     return listDict
@@ -103,18 +109,15 @@ def findInverseDocFreq(tfDict, vocList):
 
 
 def create_tfidf(tf, idf):
-    #print(tf) # dictionary from file
-    #print(idf) # single dictionary all unique words from every file
+    # tf = dictionary from page
+    # idf = single dictionary all unique words from every page
     tf_idf = {}
     for t in tf.keys():
        tf_idf[t] = tf[t] * idf[t]
-    #print(tf_idf)
-    term_weight = sorted(tf.items(), key = lambda x:x[1], reverse = True)
-    #print(term_weight)
-    #print(len(term_weight))
-    #print(len(tf_idf))
-    print(len(tf_idf))
-    return tf_idf
+    #term_weight = sorted(tf.items(), key = lambda x:x[1], reverse = True) # highest tf-idf
+    term_weight = sorted(tf.items(), key = lambda x:x[1]) # lowest tf-idf // terms are more frequent
+    # print(len(tf_idf))
+    return tf_idf, term_weight
 
 
 if __name__ == '__main__':
@@ -143,7 +146,11 @@ if __name__ == '__main__':
     cleanText() # remove newlines
     tokenizeSentences() # make everything lowercase
     vocList = tokenizeWords() # remove stopwords & punctuation, return list of unique words
-    tfDict = findTermFreq()
-    idfDict = findInverseDocFreq(tfDict, vocList) # return idfDict
+    tfDict = findTermFreq() # return term frequency as list with dictionaries for each page
+    idfDict = findInverseDocFreq(tfDict, vocList) # return inverse document frequency
+
+    # iterate through all term freq dicts for each page
     for i in range(len(tfDict)):
-        print(create_tfidf(tfDict[i], idfDict))
+        tf_idf, termWeights = create_tfidf(tfDict[i], idfDict) # tf-idf value
+        print(tf_idf) # print all terms from each page
+        print(termWeights[:25]) # print top 25 words from page
