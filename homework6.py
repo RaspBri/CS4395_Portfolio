@@ -165,7 +165,7 @@ if __name__ == '__main__':
     # I think the word season should be there
     knowledgeBase = {
         'tulips': ['Tulips come in many colors such as purple, red, orange, yellow, white, and pink',
-                   'Tulip Care: Cut stems and place in fresh water', 
+                   'Tulip Care: Cut stems and place in fresh water',
                    'There are 100 varieties of tulips on the grounds'
                 ],
         'dallas': ['Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258'
@@ -176,18 +176,18 @@ if __name__ == '__main__':
                    'Open during February, March, and mid April'
                 ],
         'contact': ['Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258',
-                  'Email: info@texas-tulips.com', 
-                    'Phone: 940-440-0232',
-                    'Bulb planting services. Email/Call for a quote.'
+                  'Email: info@texas-tulips.com',
+                  'Phone: 940-440-0232',
+                  'Bulb planting services. Email/Call for a quote.'
                 ],
-        'picking': ['Open Season: During end of winter and early spring', 
+        'picking': ['Open Season: During end of winter and early spring',
                     'You may pick tulips for $2.50/stem. All tulips will be wrapped and put in flower gel',
                     'Picking baskets are provided on the field'
                 ],
-        'april': ['Open Season: During end of winter and early spring', 
+        'april': ['Open Season: During end of winter and early spring',
                   'End Season: Mid April'
                 ],
-        'visit': ['Hours: 10AM - 8PM Everyday', 
+        'visit': ['Hours: 10AM - 8PM Everyday',
                   'Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258',
                   'Free parking'
                 ] ,
@@ -196,16 +196,14 @@ if __name__ == '__main__':
                   'Picnic tables and restrooms available',
                   'No drones allowed'
                 ],
-        'accept': ['Tulip Picking Entrance Fee: $5/person', 
+        'accept': ['Tulip Picking Entrance Fee: $5/person',
                    'Discounts for Veterans and Seniors: $7.50/person (includes three tulips & only during the week on business days)',
-                    'Accepted forms of payment: Visa, MasterCard, and Cash', 
+                    'Accepted forms of payment: Visa, MasterCard, and Cash',
                    'On Site Cafe',
                    'Professional photographers allowed for $25 entrance fee and $5 per client'
                 ],
         'parking': ['Parking Fee: FREE'
                 ]
     }
-    
-    
-    
+
     pickle.dump(knowledgeBase, open('knowledgeBase.pickle', 'wb')) # pickle database
