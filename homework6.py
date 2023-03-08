@@ -152,7 +152,7 @@ if __name__ == '__main__':
     for i in range(len(tfDict)):
         tf_idf, termWeights = create_tfidf(tfDict[i], idfDict) # tf-idf value
         #print(tf_idf) # print all terms from each page
-        print(termWeights) # print top 25 words from page
+    print(termWeights[:25]) # print top 25 words from page
 
 
     """
@@ -174,7 +174,7 @@ if __name__ == '__main__':
         'april': ['Open Season: During end of winter and early spring', 'End Season: Mid April'],
         'visit': ['Hours: 10AM - 8PM Everyday', 'Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258'] ,
         'field': ['Hours: 10AM - 8PM Everyday'],
-        'Accept': ['Tulip Picking Entrance Fee: $5/person', 'Discounts for Veterans and Seniors: $7.50/person (includes three tulips & only during the week on business days)',
+        'accept': ['Tulip Picking Entrance Fee: $5/person', 'Discounts for Veterans and Seniors: $7.50/person (includes three tulips & only during the week on business days)',
                 'Accepted forms of payment: Visa, MasterCard, and Cash', 'On Site Cafe'],
         'parking': ['Parking Fee: FREE']
     }
