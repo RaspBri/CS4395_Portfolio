@@ -2,16 +2,13 @@ import requests
 import math
 from bs4 import BeautifulSoup
 import pickle
-import nltk
-from nltk import word_tokenize, sent_tokenize, ngrams, FreqDist
+from nltk import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-from collections import Counter
 
 """ 
-            MUST HAVE FEW LINKS FROM OUTSIDE THE DOMAIN (GO FOR SOCIAL MEDIA PAGES)
-            - maybe global variable for the range?
-            - update all variableLikeThis to variable_like_this
+            Some links go to facebook / instagram
+            Topic: Plants :)
+            Website: Texas Tulips
 """
 
 def scrapeText(URL, count):
@@ -66,6 +63,7 @@ def tokenizeWords():
     wordList = list(set(wordList))
     return wordList
 
+
 def findTermFreq():
     listDict = []
     for i in range(1, 15):
@@ -112,11 +110,12 @@ def findInverseDocFreq(tfDict, vocList):
 def create_tfidf(tf, idf):
     # tf = dictionary from page
     # idf = single dictionary all unique words from every page
+    # td-idf closer to 0 = less important
     tf_idf = {}
     for t in tf.keys():
        tf_idf[t] = tf[t] * idf[t]
-    #term_weight = sorted(tf.items(), key = lambda x:x[1], reverse = True) # highest tf-idf
-    term_weight = sorted(tf.items(), key = lambda x:x[1]) # lowest tf-idf // terms are more frequent
+    term_weight = sorted(tf.items(), key = lambda x:x[1], reverse = True) # highest tf-idf
+    #term_weight = sorted(tf.items(), key = lambda x:x[1]) # lowest tf-idf
     # print(len(tf_idf))
     return tf_idf, term_weight
 
@@ -130,19 +129,20 @@ if __name__ == '__main__':
     page = requests.get(URL)
     soup = BeautifulSoup(page.content, 'html.parser')
 
-    #text = soup.get_text()
-    #print(text[:100]) # Outputs headers only
-
-    #for p in soup.select('p'):
-   #     print(p) # print paragraph info
-
     # Loop to find all URLs on Texas Tulips' website
     counter = 0
+    urlList = []
     for link in soup.find_all('a'):
         counter += 1
-        if counter > 15:
+        if counter > 20:
             break
-        scrapeText(link.get('href'), counter)
+        #scrapeText(link.get('href'), counter)
+        urlList.append(link.get('href'))
+    urlList = list(set(urlList)) # do not use same url
+
+    for i in range(1, (len(urlList) + 1), 1): # range(start, stop, step)
+        scrapeText(link.get('href'), i)
+
 
     cleanText() # remove newlines
     tokenizeSentences() # make everything lowercase
@@ -154,29 +154,29 @@ if __name__ == '__main__':
     for i in range(len(tfDict)):
         tf_idf, termWeights = create_tfidf(tfDict[i], idfDict) # tf-idf value
         #print(tf_idf) # print all terms from each page
-        print(termWeights[:25]) # print top 25 words from page
-    
+        #print(termWeights) # print top 25 words from page
+
     """
     TOP 10 TERMS:
     tulips, dallas, texas, season, contact,
-    february, april, visit, times, pay, parking
+    picking, april, visit, times, pay, parking
     """
-    
+
     # mini knowledge base w/ basic facts to build off of later
     knowledgeBase = {
-        'tulips': ['Tulips come in many colors such as: purple, red, orange, yellow, white, and pink', 
+        'tulips': ['Tulips come in many colors such as: purple, red, orange, yellow, white, and pink',
                  'Tulip Care: Cut stems and place in fresh water', 'Types of tulips on the grounds: 100 varieties of tulips'],
         'dallas': ['Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258'],
         'texas': ['Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258'],
         'season': ['Open Season: During end of winter and early spring'],
-        'contact': ['Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258', 
+        'contact': ['Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258',
                   'Email: info@texas-tulips.com', 'Phone: 940-440-0232'],
-        'february': ['Open Season: During end of winter and early spring'],
+        'picking': ['Open Season: During end of winter and early spring'],
         'april': ['Open Season: During end of winter and early spring', 'End Season: Mid April'],
         'visit': ['Hours: 10AM - 8PM Everyday', 'Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258'] ,
-        'times': ['Hours: 10AM - 8PM Everyday'], 
-        'pay': ['Entrance Fee: $5/person', 'Discounts for Veterans and Seniors: $7.50/person (includes three tulips & only during the week on business days)', 
-                'Accepted forms of payment: Visa, MasterCard, and Cash'], 
-        'parking': ['Parking Fee: FREE'] 
+        'times': ['Hours: 10AM - 8PM Everyday'],
+        'pay': ['Entrance Fee: $5/person', 'Discounts for Veterans and Seniors: $7.50/person (includes three tulips & only during the week on business days)',
+                'Accepted forms of payment: Visa, MasterCard, and Cash'],
+        'parking': ['Parking Fee: FREE']
     }
     pickle.dump(knowledgeBase, open('knowledgeBase.pickle', 'wb')) # pickle database
