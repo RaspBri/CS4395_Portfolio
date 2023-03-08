@@ -1,6 +1,7 @@
 import requests
 import math
 from bs4 import BeautifulSoup
+import pickle
 import nltk
 from nltk import word_tokenize, sent_tokenize, ngrams, FreqDist
 from nltk.corpus import stopwords
@@ -161,6 +162,7 @@ if __name__ == '__main__':
     february, april, visit, times, pay, parking
     """
     
+    # mini knowledge base w/ basic facts to build off of later
     knowledgeBase = {
         'tulips': ['Tulips come in many colors such as: purple, red, orange, yellow, white, and pink', 
                  'Tulip Care: Cut stems and place in fresh water', 'Types of tulips on the grounds: 100 varieties of tulips'],
@@ -177,3 +179,4 @@ if __name__ == '__main__':
                 'Accepted forms of payment: Visa, MasterCard, and Cash'], 
         'parking': ['Parking Fee: FREE'] 
     }
+    pickle.dump(knowledgeBase, open('knowledgeBase.pickle', 'wb')) # pickle database
