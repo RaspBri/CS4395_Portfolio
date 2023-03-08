@@ -39,5 +39,5 @@ Check out Assignment 4 [here](N_Gram/NGram_Narrative.pdf)! The code needed to ru
 ## Assignment 5
 Check out Assignment 5 [here](HW-HLT.pdf).
 
-# Assignment 6
+## Assignment 6
 Check out Assignment 6 [here](homework6.py) and the writeup report [here](Data_Files/WebCrawlerFullReport.pdf).
