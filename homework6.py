@@ -108,15 +108,17 @@ def create_tfidf(tf, idf):
         idf = single dictionary all unique words from every page
         td-idf closer to 0 = less important
     """
-    
+
     tf_idf = {}
     for t in tf.keys():
        tf_idf[t] = tf[t] * idf[t]
+
     term_weight = sorted(tf.items(), key = lambda x:x[1], reverse = True) # highest tf-idf
     # term_weight = sorted(tf.items(), key = lambda x:x[1]) # lowest tf-idf
     return tf_idf, term_weight
 
 
+# ----------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
 
     # Smaller local plant shops did not have enough URLs for the project, using this website instead
@@ -150,12 +152,13 @@ if __name__ == '__main__':
     for i in range(len(tfDict)):
         tf_idf, termWeights = create_tfidf(tfDict[i], idfDict) # tf-idf value
         #print(tf_idf) # print all terms from each page
-        #print(termWeights) # print top 25 words from page
+        print(termWeights) # print top 25 words from page
+
 
     """
     TOP 10 TERMS:
-    tulips, dallas, texas, season, contact,
-    picking, april, visit, times, pay, parking
+    tulips, dallas, texas, spring, contact,
+    picking, april, visit, field, activities, parking
     """
 
     # mini knowledge base w/ basic facts to build out later
@@ -164,15 +167,15 @@ if __name__ == '__main__':
                  'Tulip Care: Cut stems and place in fresh water', 'Types of tulips on the grounds: 100 varieties of tulips'],
         'dallas': ['Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258'],
         'texas': ['Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258'],
-        'season': ['Open Season: During end of winter and early spring'],
+        'spring': ['Open Season: During end of winter and early spring'],
         'contact': ['Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258',
                   'Email: info@texas-tulips.com', 'Phone: 940-440-0232'],
         'picking': ['Open Season: During end of winter and early spring'],
         'april': ['Open Season: During end of winter and early spring', 'End Season: Mid April'],
         'visit': ['Hours: 10AM - 8PM Everyday', 'Address: North of Dallas at 10656 FM2931, Pilot Point TX 76258'] ,
-        'times': ['Hours: 10AM - 8PM Everyday'],
-        'pay': ['Entrance Fee: $5/person', 'Discounts for Veterans and Seniors: $7.50/person (includes three tulips & only during the week on business days)',
-                'Accepted forms of payment: Visa, MasterCard, and Cash'],
+        'field': ['Hours: 10AM - 8PM Everyday'],
+        'Accept': ['Tulip Picking Entrance Fee: $5/person', 'Discounts for Veterans and Seniors: $7.50/person (includes three tulips & only during the week on business days)',
+                'Accepted forms of payment: Visa, MasterCard, and Cash', 'On Site Cafe'],
         'parking': ['Parking Fee: FREE']
     }
     pickle.dump(knowledgeBase, open('knowledgeBase.pickle', 'wb')) # pickle database
