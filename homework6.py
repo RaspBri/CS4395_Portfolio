@@ -153,5 +153,10 @@ if __name__ == '__main__':
     for i in range(len(tfDict)):
         tf_idf, termWeights = create_tfidf(tfDict[i], idfDict) # tf-idf value
         #print(tf_idf) # print all terms from each page
-        # print top 25 words from page
-        print(termWeights[:25])
+        print(termWeights[:25]) # print top 25 words from page
+    
+    """
+    TOP 10 TERMS:
+    tulips, dallas, texas, season, contact,
+    february, april, visit, times, pay, parking
+    """
