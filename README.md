@@ -43,4 +43,4 @@ Check out Assignment 5 [here](HW-HLT.pdf).
 Check out Assignment 6 [here](homework6.py) and the writeup report [here](Data_Files/WebCrawlerFullReport.pdf).
 
 ## Assignment 7
-Check out Assignment 7 [here](TextClassification.ipynb and the write up report [here](Data_Files/TextClassification.pdf).
+Check out Assignment 7 [here](TextClassification.ipynb) and the write up report [here](Data_Files/TextClassification.pdf).
