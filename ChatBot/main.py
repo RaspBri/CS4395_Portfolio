@@ -33,26 +33,31 @@ response = openai.ChatCompletion.create(
 import re
 import requests
 from bs4 import BeautifulSoup
-from nltk import word_tokenize
+from nltk import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 import math
+import json
 
 
+#
 def write_to_file(soup):
     for paragraph in soup.find_all('p'):
         text = ''
         text += paragraph.text
         text = re.sub(r'\[\d+\]', '', text)  # remove mini reference numbers from lines
-        f = open((URL.rsplit('/', 1)[-1]) + '.txt', "w") # read page name from URL
+        f = open((URL.rsplit('/', 1)[-1]) + '.txt', "a") # read page name from URL
         f.write(text)
 
 
+#
 def create_tf_dict(doc):
     tf_dict = {}
     tokens = word_tokenize(doc.lower().replace('\n', ' ').replace(',', ' '))
     tokens = [t for t in tokens if t.isalpha() and t.lower() and
               t not in stopwords.words('english')]
-    print(tokens)
+
+    sentence = sent_tokenize(doc)
+
     # get term frequencies
     for t in tokens:
         if t in tf_dict:
@@ -68,7 +73,59 @@ def create_tf_dict(doc):
     for t in tf_dict.keys():
         tf_dict[t] = tf_dict[t] / len(tokens)
 
-    return tf_dict
+    return tf_dict, sentence
+
+
+#
+def create_tfidf(tf, idf):
+    tf_idf = {}
+    for t in tf.keys():
+        tf_idf[t] = tf[t] * idf[t]
+
+    #print(tf_idf)
+    term_weight = sorted(tf.items(), key=lambda x: x[1], reverse=True)
+    return term_weight
+
+
+def term_freq():
+    vocab = set()  # set of words
+    tf_dict_list = []
+    idf_dict = {}
+    all_words = []  # contains tf_dict.keys()
+    term_weight_list = []  # tf_idf for each file
+    sentences = []
+
+    # get tf_dict for each file
+    for item in file_names:
+        file_contents = open(item, 'r')
+        tf_dict, sentence = create_tf_dict(file_contents.read())
+        vocab = vocab.union(set(tf_dict.keys()))  # make set of all unique words
+        all_words += tf_dict.keys()  # get all words from every file
+        tf_dict_list.append(tf_dict)
+        sentences += sentence
+
+    for term in vocab:  # get idf
+        temp = ['x' for voc in all_words if term in voc]
+        idf_dict[term] = math.log((1 + len(file_names)) / (1 + len(temp)))
+
+    for item in range(len(file_names)):
+        term_weight = (create_tfidf(tf_dict_list[item], idf_dict))
+        term_weight_list.append(term_weight)
+        #print(term_weight)
+
+    return vocab, tf_dict_list, idf_dict, all_words, term_weight_list, sentences
+
+
+
+def add_intents(count, i, tag, sentence):
+    data["intents"].append({
+        "tag": "{}".format(tag),  # get word to make the tag
+        "patterns": ["Tell me about {}".format(tag)],
+        "responses": ["{}".format(sentence)]
+    })
+
+#def append_intents(count, i, tag, sentence):
+   # intents["intents"].update({responses: sentence})
 
 # ---------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
@@ -78,22 +135,68 @@ if __name__ == '__main__':
 
     # Get URLs from .txt file and save them to their own file
     file_names = []
+    data = {"intents": []}
     for line in file:
         URL = (re.search("(?P<url>https?://[^\s]+)", line).group("url"))
         page = requests.get(URL)
         soup = BeautifulSoup(page.content, 'html.parser')
         file_names.append((line.rsplit('/', 1)[-1]).strip() + ".txt")
-    write_to_file(soup)
+        #write_to_file(soup)                                                       # <= BE SURE TO MAKE LINE VISIBLE
 
-    vocab = set()  # set of words
-    # lowercase text, remove newlines
-    for item in file_names:
-        file_contents = open(item, 'r')
-        tf_dict = create_tf_dict(file_contents.read())
-        vocab = vocab.union(set(tf_dict.keys()))
-        #print(tf_dict)
-    #print("number of unique words:", len(vocab))
+    vocab, tf_dict_list, idf_dict, all_words, term_weight_list, sentences = term_freq()
+    """
+    to traverse through most frequent words
+    term_weight_list[x] where x is the document index you wish to see
+    """
 
+    test = "testing"
+    datas = {
+        "intents": [
+            {
+                "tag": "greeting",
+                "patterns": ["Hi", "Hello", "Hey"],
+                "responses": ["Hi", "Hello", "Hey", "Good to see you"],
+                "context":[""]
+            },
+            {
+                "tag": "goodbye",
+                "patterns": ["Bye", "Goodbye", "See you later"],
+                "responses": ["Nice chatting, bye", "Bye", "Goodbye"],
+                "context": [""]
+            },
+            {
+                "tag": "thanks",
+                "patterns": ["Thanks", "Thank you"],
+                "responses": ["You're Welcome", "No problem"],
+                "context": [""]
+            },
+            {
+                "tag": "{tag}".format(tag=test),
+                "patterns": [""],
+                "responses": [""],
+                "context": [""]
+            },
+        ]
+    }
 
+    """intents = {"intents": []}
+    #for index, result in enumerate(term_weight_list):
+    for i in range(2):
+        intents["intents"].append({
+            "tag": "{}".format(term_weight_list[0][1][0]), # get first file, first word
+            "patterns": [""],
+            "responses": [""]
+        })"""
 
- 
+    for count in range(len(file_names)): # get to file
+        for i in range(len(term_weight_list[count])): # go through all words from term weight
+            for sentence in sentences: # get to sentence
+                if term_weight_list[count][i][0] in sentence: # if word is found in sentence
+                    #print("WORD: ", term_weight_list[count][i][0], "\n SENTENCE: ", sentence, "\n\n\n\n")
+                        #add_intents(count, i, term_weight_list[count][i][0], sentence)
+                    #else:
+                      #  append_intents(count, i, term_weight_list[count][i][0], sentence)
+
+    #print(data)
+    for item in data:
+        print(data)
