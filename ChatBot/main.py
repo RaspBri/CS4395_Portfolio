@@ -117,15 +117,20 @@ def term_freq():
 
 
 
-def add_intents(count, i, tag, sentence):
+def add_intents(tag, temp_list):
     data["intents"].append({
         "tag": "{}".format(tag),  # get word to make the tag
         "patterns": ["Tell me about {}".format(tag)],
-        "responses": ["{}".format(sentence)]
+        "responses": ["{}".format(temp_list)]
     })
 
-#def append_intents(count, i, tag, sentence):
-   # intents["intents"].update({responses: sentence})
+
+def write_json(new_data, filename):
+    with open(filename, 'r+') as file:
+        file_data = json.load(file)
+        file_data['intents'].append(new_data)
+        file.seek(0)
+        json.dump(file_data, file, indent=4)
 
 # ---------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
@@ -135,7 +140,9 @@ if __name__ == '__main__':
 
     # Get URLs from .txt file and save them to their own file
     file_names = []
-    data = {"intents": []}
+    data = {"intents": [{"tag": "greeting","patterns": ["Hi", "Hello", "Hey"],
+                        "responses": ["Hi", "Hello", "Hey", "Good to see you"],"context":[""]}]}
+
     for line in file:
         URL = (re.search("(?P<url>https?://[^\s]+)", line).group("url"))
         page = requests.get(URL)
@@ -149,54 +156,44 @@ if __name__ == '__main__':
     term_weight_list[x] where x is the document index you wish to see
     """
 
-    test = "testing"
-    datas = {
-        "intents": [
-            {
+    greeting = {
                 "tag": "greeting",
                 "patterns": ["Hi", "Hello", "Hey"],
                 "responses": ["Hi", "Hello", "Hey", "Good to see you"],
                 "context":[""]
-            },
-            {
+            }
+    goodbye = {
                 "tag": "goodbye",
                 "patterns": ["Bye", "Goodbye", "See you later"],
                 "responses": ["Nice chatting, bye", "Bye", "Goodbye"],
                 "context": [""]
-            },
-            {
+            }
+    thanks = {
                 "tag": "thanks",
                 "patterns": ["Thanks", "Thank you"],
                 "responses": ["You're Welcome", "No problem"],
                 "context": [""]
-            },
-            {
-                "tag": "{tag}".format(tag=test),
-                "patterns": [""],
-                "responses": [""],
-                "context": [""]
-            },
-        ]
-    }
+            }
 
-    """intents = {"intents": []}
-    #for index, result in enumerate(term_weight_list):
-    for i in range(2):
-        intents["intents"].append({
-            "tag": "{}".format(term_weight_list[0][1][0]), # get first file, first word
-            "patterns": [""],
-            "responses": [""]
-        })"""
 
+    # Make contents for .json file
+    temp_list = []
     for count in range(len(file_names)): # get to file
         for i in range(len(term_weight_list[count])): # go through all words from term weight
-            for sentence in sentences: # get to sentence
+            for sentence in sentences: # get to sentence level
                 if term_weight_list[count][i][0] in sentence: # if word is found in sentence
-                    #print("WORD: ", term_weight_list[count][i][0], "\n SENTENCE: ", sentence, "\n\n\n\n")
-                        #add_intents(count, i, term_weight_list[count][i][0], sentence)
-                    #else:
-                      #  append_intents(count, i, term_weight_list[count][i][0], sentence)
+                    temp_list.append(sentence) # add sentence to a list
+            add_intents(term_weight_list[count][i][0], (', '.join(map(str, temp_list)))) # add list of sentences to .json
+            temp_list.clear() # clear list for next run
 
+    # steralize and write to .json
+    json_object = json.dumps(data, indent=4)
+    with open("data.json", "w") as outfile:
+        outfile.write(json_object)
+
+    write_json(data, 'data.json')
+    #write_json(greeting, 'data.json')
+    #write_json(goodbye, 'data.json')
+    #write_json(thanks, 'data.json')
     #print(data)
-    for item in data:
-        print(data)
+
