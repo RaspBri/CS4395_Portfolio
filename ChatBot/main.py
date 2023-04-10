@@ -82,11 +82,11 @@ def create_tfidf(tf, idf):
     for t in tf.keys():
         tf_idf[t] = tf[t] * idf[t]
 
-    #print(tf_idf)
     term_weight = sorted(tf.items(), key=lambda x: x[1], reverse=True)
     return term_weight
 
 
+#
 def term_freq():
     vocab = set()  # set of words
     tf_dict_list = []
@@ -116,7 +116,7 @@ def term_freq():
     return vocab, tf_dict_list, idf_dict, all_words, term_weight_list, sentences
 
 
-
+#
 def add_intents(tag, temp_list):
     data["intents"].append({
         "tag": "{}".format(tag),  # get word to make the tag
@@ -125,12 +125,27 @@ def add_intents(tag, temp_list):
     })
 
 
-def write_json(new_data, filename):
-    with open(filename, 'r+') as file:
-        file_data = json.load(file)
-        file_data['intents'].append(new_data)
-        file.seek(0)
-        json.dump(file_data, file, indent=4)
+#
+def add_defaults():
+    data["intents"].append({
+                "tag": "greeting",
+                "patterns": ["Hi", "Hello", "Hey"],
+                "responses": ["Hi", "Hello", "Hey", "Good to see you"],
+                "context":[""]
+    })
+    data["intents"].append({
+                "tag": "goodbye",
+                "patterns": ["Bye", "Goodbye", "See you later"],
+                "responses": ["Nice chatting, bye", "Bye", "Goodbye"],
+                "context": [""]
+    })
+    data["intents"].append({
+                "tag": "thanks",
+                "patterns": ["Thanks", "Thank you"],
+                "responses": ["You're Welcome", "No problem"],
+                "context": [""]
+    })
+
 
 # ---------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
@@ -140,8 +155,7 @@ if __name__ == '__main__':
 
     # Get URLs from .txt file and save them to their own file
     file_names = []
-    data = {"intents": [{"tag": "greeting","patterns": ["Hi", "Hello", "Hey"],
-                        "responses": ["Hi", "Hello", "Hey", "Good to see you"],"context":[""]}]}
+    data = {"intents": []}
 
     for line in file:
         URL = (re.search("(?P<url>https?://[^\s]+)", line).group("url"))
@@ -156,26 +170,6 @@ if __name__ == '__main__':
     term_weight_list[x] where x is the document index you wish to see
     """
 
-    greeting = {
-                "tag": "greeting",
-                "patterns": ["Hi", "Hello", "Hey"],
-                "responses": ["Hi", "Hello", "Hey", "Good to see you"],
-                "context":[""]
-            }
-    goodbye = {
-                "tag": "goodbye",
-                "patterns": ["Bye", "Goodbye", "See you later"],
-                "responses": ["Nice chatting, bye", "Bye", "Goodbye"],
-                "context": [""]
-            }
-    thanks = {
-                "tag": "thanks",
-                "patterns": ["Thanks", "Thank you"],
-                "responses": ["You're Welcome", "No problem"],
-                "context": [""]
-            }
-
-
     # Make contents for .json file
     temp_list = []
     for count in range(len(file_names)): # get to file
@@ -186,14 +180,10 @@ if __name__ == '__main__':
             add_intents(term_weight_list[count][i][0], (', '.join(map(str, temp_list)))) # add list of sentences to .json
             temp_list.clear() # clear list for next run
 
-    # steralize and write to .json
-    json_object = json.dumps(data, indent=4)
-    with open("data.json", "w") as outfile:
-        outfile.write(json_object)
+    add_defaults() # add default values to .json file
 
-    write_json(data, 'data.json')
-    #write_json(greeting, 'data.json')
-    #write_json(goodbye, 'data.json')
-    #write_json(thanks, 'data.json')
-    #print(data)
+    # steralize and write dict to .json
+    with open('data.json', 'w') as outfile:
+        json.dump(data, outfile, indent=4)
+
 
