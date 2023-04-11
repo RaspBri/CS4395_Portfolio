@@ -29,7 +29,13 @@ response = openai.ChatCompletion.create(
       ]
 )
 """
+import string
 
+"""
+To fix "unresolved reference" error for sklearn, run this command >>> pip install -U scikit-learn
+
+Run command in terminal before running >>> pip install nltk tensorflow tflearn
+"""
 import re
 import requests
 from bs4 import BeautifulSoup
@@ -37,6 +43,14 @@ from nltk import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
 import math
 import json
+import nltk
+from nltk.stem.lancaster import LancasterStemmer
+import numpy
+import tflearn
+import tensorflow
+import random
+import json
+import pickle
 
 
 #
@@ -117,11 +131,11 @@ def term_freq():
 
 
 #
-def add_intents(tag, temp_list):
+def add_intents(tag, temp_list, word_list):
     data["intents"].append({
         "tag": "{}".format(tag),  # get word to make the tag
-        "patterns": ["Tell me about {}".format(tag)],
-        "responses": ["{}".format(temp_list)]
+        "patterns": ["{}".format(tag)],
+        "responses": [temp_list.split('.')]
     })
 
 
@@ -151,7 +165,6 @@ def add_defaults():
 if __name__ == '__main__':
     # Read in links to files about user's interest
     file = open("links.txt", "r")
-    # print(file.read())
 
     # Get URLs from .txt file and save them to their own file
     file_names = []
@@ -171,18 +184,18 @@ if __name__ == '__main__':
     """
 
     # Make contents for .json file
-    temp_list = []
-    for count in range(len(file_names)): # get to file
+    temp_list = ''
+    #for count in range(len(file_names)): # get to file
+    for count in range(3):  # get to file
         for i in range(len(term_weight_list[count])): # go through all words from term weight
             for sentence in sentences: # get to sentence level
                 if term_weight_list[count][i][0] in sentence: # if word is found in sentence
-                    temp_list.append(sentence) # add sentence to a list
-            add_intents(term_weight_list[count][i][0], (', '.join(map(str, temp_list)))) # add list of sentences to .json
-            temp_list.clear() # clear list for next run
+                    temp_list += sentence # add sentence to a list
+            add_intents(term_weight_list[count][i][0], temp_list, all_words[count]) # add list of sentences to .json
+            temp_list = '' # clear list for next run
 
-    add_defaults() # add default values to .json file
-
-    # steralize and write dict to .json
+    # write dict to .json
+    add_defaults()  # add default values to .json file
     with open('data.json', 'w') as outfile:
         json.dump(data, outfile, indent=4)
 
