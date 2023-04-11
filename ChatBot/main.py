@@ -132,9 +132,13 @@ def term_freq():
 
 #
 def add_intents(tag, temp_list, word_list):
+    top_words = ''
+    for item in word_list:
+        top_words += (item[0] + ",")
+
     data["intents"].append({
         "tag": "{}".format(tag),  # get word to make the tag
-        "patterns": ["{}".format(tag)],
+        "patterns": top_words.split(','),
         "responses": [temp_list.split('.')]
     })
 
@@ -191,8 +195,9 @@ if __name__ == '__main__':
             for sentence in sentences: # get to sentence level
                 if term_weight_list[count][i][0] in sentence: # if word is found in sentence
                     temp_list += sentence # add sentence to a list
-            add_intents(term_weight_list[count][i][0], temp_list, all_words[count]) # add list of sentences to .json
+            add_intents(term_weight_list[count][i][0], temp_list, (sorted(tf_dict_list[count].items(), key=lambda x: x[1], reverse=True))) # add list of sentences to .json
             temp_list = '' # clear list for next run
+
 
     # write dict to .json
     add_defaults()  # add default values to .json file
