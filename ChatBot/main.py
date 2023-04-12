@@ -133,18 +133,9 @@ def term_freq():
 
 #
 def add_intents(tag, temp_list, word_list):
-    count = 5
-    if len(word_list) < 5:
-        count = 3
-
-    top = []
-    for item in word_list: # get top 5 words w/ frequencies
-        top.append(item[0])
-    # Need to just get word not probability with word
-
     data["intents"].append({
         "tag": "{}".format(tag),  # get word to make the tag
-        "patterns": top,
+        "patterns": word_list,
         "responses": temp_list.split('.')
     })
 
@@ -169,6 +160,16 @@ def add_defaults():
                 "responses": ["You're Welcome", "No problem"],
                 "context": [""]
     })
+
+# skip over duplicate words adn omit the word "also"
+def check_list(word_list, seen):
+    final_list = []
+    for word in word_list:
+        count = seen.count(word[0])
+        if count < 1 and word[0] != 'also':
+            final_list.append(word[0])
+            seen.append(word[0])
+    return final_list, seen
 
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -195,12 +196,15 @@ if __name__ == '__main__':
 
     # Make contents for .json file
     temp_list = ''
+    seen_list = []
     for count in range(len(file_names)): # get to file
         for i in range(len(term_weight_list[count])): # go through all words from term weight
             for sentence in sentences: # get to sentence level
                 if term_weight_list[count][i][0] in sentence: # if word is found in sentence
                     temp_list += sentence # add sentence to a list
         word_list = (sorted(tf_dict_list[count].items(), key=lambda x: x[1], reverse=True))
+        word_list, seen_list_add = check_list(word_list, seen_list)
+        seen_list.append(seen_list_add)
         add_intents(term_weight_list[count][i][0], temp_list, word_list[:5]) # add list of sentences to .json
         temp_list = '' # clear list for next run
 
