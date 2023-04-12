@@ -53,6 +53,7 @@ import random
 import json
 import jsbeautifier
 import pickle
+import extractions
 
 
 #
@@ -156,7 +157,7 @@ def add_defaults():
     })
     data["intents"].append({
                 "tag": "thanks",
-                "patterns": ["Thanks", "Thank you"],
+                "patterns": ["Thanks", "Thank you", "Thank", "Appreciate It"],
                 "responses": ["You're Welcome", "No problem"],
                 "context": [""]
     })
@@ -215,4 +216,5 @@ if __name__ == '__main__':
     with open('data.json', 'w') as outfile:
         json.dump(data, outfile, indent=4)
 
+    extractions.chat()
 
