@@ -35,6 +35,7 @@ import string
 To fix "unresolved reference" error for sklearn, run this command >>> pip install -U scikit-learn
 
 Run command in terminal before running >>> pip install nltk tensorflow tflearn
+INstall >>> pip install jsbeautifier
 """
 import re
 import requests
@@ -50,6 +51,7 @@ import tflearn
 import tensorflow
 import random
 import json
+import jsbeautifier
 import pickle
 
 
@@ -125,21 +127,25 @@ def term_freq():
     for item in range(len(file_names)):
         term_weight = (create_tfidf(tf_dict_list[item], idf_dict))
         term_weight_list.append(term_weight)
-        #print(term_weight)
 
     return vocab, tf_dict_list, idf_dict, all_words, term_weight_list, sentences
 
 
 #
 def add_intents(tag, temp_list, word_list):
-    top_words = ''
-    for item in word_list:
-        top_words += (item[0] + ",")
+    count = 5
+    if len(word_list) < 5:
+        count = 3
+
+    top = []
+    for item in word_list: # get top 5 words w/ frequencies
+        top.append(item[0])
+    # Need to just get word not probability with word
 
     data["intents"].append({
         "tag": "{}".format(tag),  # get word to make the tag
-        "patterns": top_words.split(','),
-        "responses": [temp_list.split('.')]
+        "patterns": top,
+        "responses": temp_list.split('.')
     })
 
 
@@ -189,18 +195,19 @@ if __name__ == '__main__':
 
     # Make contents for .json file
     temp_list = ''
-    #for count in range(len(file_names)): # get to file
-    for count in range(3):  # get to file
+    for count in range(len(file_names)): # get to file
         for i in range(len(term_weight_list[count])): # go through all words from term weight
             for sentence in sentences: # get to sentence level
                 if term_weight_list[count][i][0] in sentence: # if word is found in sentence
                     temp_list += sentence # add sentence to a list
-            add_intents(term_weight_list[count][i][0], temp_list, (sorted(tf_dict_list[count].items(), key=lambda x: x[1], reverse=True))) # add list of sentences to .json
-            temp_list = '' # clear list for next run
+        word_list = (sorted(tf_dict_list[count].items(), key=lambda x: x[1], reverse=True))
+        add_intents(term_weight_list[count][i][0], temp_list, word_list[:5]) # add list of sentences to .json
+        temp_list = '' # clear list for next run
 
 
     # write dict to .json
     add_defaults()  # add default values to .json file
+
     with open('data.json', 'w') as outfile:
         json.dump(data, outfile, indent=4)
 
