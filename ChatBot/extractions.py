@@ -203,3 +203,8 @@ def chat():
         print(responses[i])
 
 
+
+
+
+
+chat()
