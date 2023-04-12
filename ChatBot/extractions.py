@@ -18,8 +18,12 @@ from tensorflow.python.framework import ops
 import random
 import json
 import pickle
+import sys
 
-with open("data.json") as file:
+filename = sys.argv[1]
+print(filename)
+
+with open(filename) as file:
     data = json.load(file)
 
 train = input("Train the model type in (train): ")
@@ -89,11 +93,11 @@ if train.lower() == "train":
     training = np.array(training)
     output = np.array(output)
 
-    with open('data.pickel', 'wb') as f:
+    with open((filename +'.data.pickel'), 'wb') as f:
         pickle.dump((words, labels, training, output), f)
 
 else:
-    with open('data.pickel', 'rb') as f:
+    with open((filename +'.data.pickel'), 'rb') as f:
         words, labels, training, output = pickle.load(f)
 # Data preprocessing end
 
@@ -196,38 +200,49 @@ def chat():
         if 'dislike' in inp:
             dislike = inp
             dislike = dislike.rsplit('dislike ', 1)[1]
-            print(dislike, " dislike")
+            dislikes_list.append(dislike)
+            print("I see")
         elif 'like' in inp:
             like = inp
             like = like.rsplit('like ', 1)[1]
-            print(like, " like")
+            likes_list.append(like)
+            print("I enjoy {} too".format(like))
         else:
             print("none found")
 
+            # All this is going to give us a matrix of numbers where the numbers are probabilities of each class
+            results = model.predict([bag_of_words(inp, words)])
+            # Argmax will grab the index of highest probability in the matrix
+            results_index = np.argmax(results)
+            tag = labels[results_index]
 
-        # All this is going to give us a matrix of numbers where the numbers are probabilities of each class
-        results = model.predict([bag_of_words(inp, words)])
-        # Argmax will grab the index of highest probability in the matrix
-        results_index = np.argmax(results)
-        tag = labels[results_index]
+            for tg in data["intents"]:
+                if tg['tag'] == tag:
+                    responses = tg['responses']
 
-        for tg in data["intents"]:
-            if tg['tag'] == tag:
-                responses = tg['responses']
+            #print(random.choice(responses))
+            #generate_response(inp, responses.lower())
+            tfidf_vectorizer = TfidfVectorizer()
+            sparse_matrix = tfidf_vectorizer.fit_transform(responses)
+            doc_term_matrix = sparse_matrix.toarray()
 
+            tgt_transform = tfidf_vectorizer.transform([inp]).toarray()
+            tgt_cosine = cosine_similarity(doc_term_matrix, tgt_transform)
+            tgt_cosine_list = list(tgt_cosine)
+            i = tgt_cosine_list.index(max(tgt_cosine_list))
+            print(i)
+            print(responses[i])
 
-        #print(random.choice(responses))
-        #generate_response(inp, responses.lower())
-        tfidf_vectorizer = TfidfVectorizer()
-        sparse_matrix = tfidf_vectorizer.fit_transform(responses)
-        doc_term_matrix = sparse_matrix.toarray()
+    # add to .json file with likes and dislikes
+    if len(likes_list) > 0:
+        add_likes(likes_list)
+        with open(filename, 'w') as outfile: # Write the updated object back to the file
+            json.dump(data, outfile, indent=4)
 
-        tgt_transform = tfidf_vectorizer.transform([inp]).toarray()
-        tgt_cosine = cosine_similarity(doc_term_matrix, tgt_transform)
-        tgt_cosine_list = list(tgt_cosine)
-        i = tgt_cosine_list.index(max(tgt_cosine_list))
-        print(i)
-        print(responses[i])
+    if len(dislikes_list) > 0:
+        add_dislikes(dislikes_list)
+        with open(filename, 'w') as outfile: # Write the updated object back to the file
+            json.dump(data, outfile, indent=4)
 
 
 chat()
