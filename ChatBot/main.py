@@ -140,26 +140,36 @@ def add_intents(tag, temp_list, word_list):
         "responses": temp_list.split('.')
     })
 
+def greeting(name):
+    data["intents"].append({
+        "tag": "greeting",
+        "patterns": ["Hi", "Hello", "Hey"],
+        "responses": ["Hi, {}!".format(name), "Hello", "Hey", "Good to see you, {}".format(name)]
+    })
+
+def farewell(name):
+    data["intents"].append({
+        "tag": "goodbye",
+        "patterns": ["Bye", "Goodbye", "See you later"],
+        "responses": ["Nice chatting, bye", "Bye, {}".format(name), "Goodbye, {}".format(name)]
+    })
 
 #
 def add_defaults():
     data["intents"].append({
-                "tag": "greeting",
-                "patterns": ["Hi", "Hello", "Hey"],
-                "responses": ["Hi", "Hello", "Hey", "Good to see you"],
-                "context":[""]
-    })
-    data["intents"].append({
-                "tag": "goodbye",
-                "patterns": ["Bye", "Goodbye", "See you later"],
-                "responses": ["Nice chatting, bye", "Bye", "Goodbye"],
-                "context": [""]
-    })
-    data["intents"].append({
                 "tag": "thanks",
                 "patterns": ["Thanks", "Thank you"],
-                "responses": ["You're Welcome", "No problem"],
-                "context": [""]
+                "responses": ["You're Welcome", "No problem"]
+    })
+    data["intents"].append({
+        "tag": "agree",
+        "patterns": ["Yes", "Yea", "Sure", "Ok"],
+        "responses": ["Awesome!", "Love to hear it!"]
+    })
+    data["intents"].append({
+        "tag": "disagree",
+        "patterns": ["No", "Never", "Eww", "Nah"],
+        "responses": ["Oh, my bad.", "Apologies."]
     })
 
 # skip over duplicate words adn omit the word "also"
@@ -209,11 +219,17 @@ if __name__ == '__main__':
         add_intents(term_weight_list[count][i][0], temp_list, word_list[:5]) # add list of sentences to .json
         temp_list = '' # clear list for next run
 
+    print("Please enter your name...")
+    name = input("You: ")
 
     # write dict to .json
     add_defaults()  # add default values to .json file
+    greeting(name.lower())
+    farewell(name.lower())
 
-    with open('data.json', 'w') as outfile:
+    with open('{}_data.json'.format(name), 'w') as outfile:
         json.dump(data, outfile, indent=4)
 
-    os.system(f'python extractions.py')
+    # get special filename
+    cmd = "python extractions.py {}_data.json".format(name)
+    os.system(cmd)
