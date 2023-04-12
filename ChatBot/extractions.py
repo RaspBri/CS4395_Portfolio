@@ -11,12 +11,10 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 lemma = WordNetLemmatizer()
-
 import numpy as np
 import tflearn
 import tensorflow as tf
 from tensorflow.python.framework import ops
-
 import random
 import json
 import pickle
@@ -169,14 +167,43 @@ def generate_response(user_input, responses):
         print(responses[similar_sentence_num])
 
 
+def add_likes(likes_list):
+    data["intents"].append({
+        "tag": "likes",
+        "patterns": ["I like", "I love", "I enjoy", "favorite"],
+        "responses": likes_list
+    })
+
+def add_dislikes(dislikes_list):
+    data["intents"].append({
+        "tag": "dislikes",
+        "patterns": ["I don't like", "I do not like","I hate", "I don't enjoy", "I do not enjoy", "least favorite"],
+        "responses": dislikes_list
+    })
+
 # Generate user input
 def chat():
     # user input
     print("Start talking with bot!(type 'quit' to stop)")
+    likes_list = []
+    dislikes_list = []
+
     while True:
         inp = input("You: ")
         if inp.lower() == "quit":
             break
+
+        if 'dislike' in inp:
+            dislike = inp
+            dislike = dislike.rsplit('dislike ', 1)[1]
+            print(dislike, " dislike")
+        elif 'like' in inp:
+            like = inp
+            like = like.rsplit('like ', 1)[1]
+            print(like, " like")
+        else:
+            print("none found")
+
 
         # All this is going to give us a matrix of numbers where the numbers are probabilities of each class
         results = model.predict([bag_of_words(inp, words)])
@@ -201,10 +228,6 @@ def chat():
         i = tgt_cosine_list.index(max(tgt_cosine_list))
         print(i)
         print(responses[i])
-
-
-
-
 
 
 chat()
