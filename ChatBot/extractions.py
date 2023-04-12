@@ -1,41 +1,210 @@
+# Source Credit for tensorflow skeleton code, I added the rest
+# https://www.pycodemates.com/2021/11/build-a-AI-chatbot-using-python-and-deep-learning.html
+import string
+from urllib import response
+import nltk
 import spacy
-# >>> python -m spacy download en_core_web_sm
-import en_core_web_sm
+from sklearn.metrics.pairwise import cosine_similarity
+nltk.download('punkt')
+from nltk.stem import WordNetLemmatizer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
-# Load the English language model
-nlp = spacy.load('en_core_web_sm')
+lemma = WordNetLemmatizer()
+
+import numpy as np
+import tflearn
+import tensorflow as tf
+from tensorflow.python.framework import ops
+
+import random
+import json
+import pickle
+
+with open("data.json") as file:
+    data = json.load(file)
+
+train = input("Train the model type in (train): ")
+# Data preprocessing start
+if train.lower() == "train":
+    words = []
+    labels = []
+    docs_x = []
+    docs_y = []
+
+    for intent in data['intents']:
+        for pattern in intent['patterns']:
+            wrds = nltk.word_tokenize(pattern)
+            words.extend(wrds)
+            docs_x.append(wrds)
+            docs_y.append(intent['tag'])
+
+        if intent["tag"] not in labels:
+            labels.append(intent['tag'])
+
+    # Getting rid of duplicate words
+    words = [lemma.lemmatize(w.lower()) for w in words if w not in "?"]
+    words = sorted(list(set(words)))
+
+    labels = sorted(labels)
+
+    '''
+    Turning words into a bag of words.
+    When feeding our model we want our words
+    to be numeric instead of string value.
+    So I'm going to do OHE the words turning
+    them to numeric values.
+
+    How we going to store it
+    word list: ['a', 'am', 'be']
+    OHE: [1, 0, 1]
+
+    Put a 1 if that word exist else put a 0
+    '''
+
+    training = []
+    output = []
+
+    out_empty = [0 for _ in range(len(labels))]
+
+    for x, doc in enumerate(docs_x):
+        # Bag of words
+        bag = []
+
+        wrds = [lemma.lemmatize(w) for w in doc]
+
+        # Going through all the words
+        for w in words:
+            if w in wrds:
+                bag.append(1)
+            else:
+                bag.append(0)
+
+        # Look through label list look for tag and set that output to 1
+        output_row = out_empty[:]
+        output_row[labels.index(docs_y[x])] = 1
+
+        training.append(bag)
+        output.append(output_row)
+
+    # turn them into arrays for easier model training
+    training = np.array(training)
+    output = np.array(output)
+
+    with open('data.pickel', 'wb') as f:
+        pickle.dump((words, labels, training, output), f)
+
+else:
+    with open('data.pickel', 'rb') as f:
+        words, labels, training, output = pickle.load(f)
+# Data preprocessing end
+
+# Model creation start
+ops.reset_default_graph()
+# Input layer trying to get the length from none on
+net = tflearn.input_data(shape=[None, len(training[0])])
+net = tflearn.fully_connected(net, 16, activation="relu")  # hidden layer
+net = tflearn.fully_connected(net, 16, activation="relu")  # hidden layer
+# Output layer solfmax
+net = tflearn.fully_connected(net, len(output[0]), activation="softmax")
+net = tflearn.regression(net)
+
+model = tflearn.DNN(net)
+# end model creation
 
 
-# Define a sample input paragraph
-input_paragraph = "In the 17th century, fascination in exotic plants grew among the aristocracy of France and England, with inventor and writer Sir Hugh Platt publishing Garden of Eden in 1660, which was a book about how to grow plants indoors"
-# Process the input paragraph with spaCy
-doc = nlp(input_paragraph)
+# Start training
+'''
+training = input values
+output = output values
+n_epoch = how many times do I want to train same dataset
+batch_sizes = how many samples of data will pass through at a time 
+show_metric = Makes the output look nicer
+'''
 
-# Initialize variables to store the identified information
-who = []
-what = []
-where = []
-when = []
+if train.lower() == "train":
+    model.fit(training, output, n_epoch=1000, batch_size=8, show_metric=True)
+    model.save("model.tflearn")
 
-# Loop through each sentence in the paragraph
-for sentence in doc.sents:
-    # Use spaCy's named entity recognition to identify entities
-    for entity in sentence.ents:
-        if entity.label_ == 'PERSON':
-            who.append(entity.text)
-        elif entity.label_ == 'GPE':
-            where.append(entity.text)
-        elif entity.label_ == 'DATE':
-            when.append(entity.text)
+else:
+    model.load("model.tflearn")
 
-    # Use dependency parsing to identify the action (what)
-    for token in sentence:
-        if token.dep_ == 'ROOT':
-            what.append(token.text)
+
+def bag_of_words(s, words):
+    bag = [0 for _ in range(len(words))]
+
+    s_words = nltk.word_tokenize(s)
+    s_words = [lemma.lemmatize(word.lower()) for word in s_words if word not in "?"]
+
+    for se in s_words:
+        for i, w in enumerate(words):
+            if w == se:
+                bag[i] = 1
+
+    return np.array(bag)
+
+def perform_lemmatization(tokens):
+    return [lemma.lemmatize(token) for token in tokens]
+
+
+def get_processed_text(doc):
+    return perform_lemmatization(nltk.word_tokenize(doc.lower().translate((dict((ord(punctuation), None) for punctuation in string.punctuation)))))
+
+def generate_response(user_input, responses):
+    bot_response = ''
+    responses.append(user_input)
+
+    word_vectorizer = TfidfVectorizer(tokenizer=get_processed_text, stop_words='english')
+    all_word_vectors = word_vectorizer.fit_transform(responses)
+    similar_vector_vals = cosine_similarity(all_word_vectors[-1], all_word_vectors)
+    similar_sentence_num = similar_vector_vals.argsort()[0][2]
+
+    matched_vector = similar_vector_vals.flatten()
+    matched_vector.sort()
+    vector_matched = matched_vector[-2]
+
+    if vector_matched == 0:
+        print("cannot understand")
+    else:
+        print(responses[similar_sentence_num])
+
+
+# Generate user input
+def chat():
+    # user input
+    print("Start talking with bot!(type 'quit' to stop)")
+    while True:
+        inp = input("You: ")
+        if inp.lower() == "quit":
             break
 
-# Print out the identified information
-print("Who: ", who)
-print("What: ", ' '.join(what))
-print("Where: ", where)
-print("When: ", ' '.join(when))
+        # All this is going to give us a matrix of numbers where the numbers are probabilities of each class
+        results = model.predict([bag_of_words(inp, words)])
+        # Argmax will grab the index of highest probability in the matrix
+        results_index = np.argmax(results)
+        tag = labels[results_index]
+
+        for tg in data["intents"]:
+            if tg['tag'] == tag:
+                responses = tg['responses']
+
+
+        #print(random.choice(responses))
+        #generate_response(inp, responses.lower())
+        tfidf_vectorizer = TfidfVectorizer()
+        sparse_matrix = tfidf_vectorizer.fit_transform(responses)
+        doc_term_matrix = sparse_matrix.toarray()
+
+        tgt_transform = tfidf_vectorizer.transform([inp]).toarray()
+        tgt_cosine = cosine_similarity(doc_term_matrix, tgt_transform)
+        tgt_cosine_list = list(tgt_cosine)
+        i = tgt_cosine_list.index(max(tgt_cosine_list))
+        print(i)
+        print(responses[i])
+
+
+
+
+
+
+chat()
