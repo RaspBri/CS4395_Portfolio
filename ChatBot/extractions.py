@@ -10,7 +10,10 @@ from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-lemma = WordNetLemmatizer()
+#lemma = WordNetLemmatizer()
+from nltk.stem.lancaster import LancasterStemmer
+stemmer = LancasterStemmer()
+
 import numpy as np
 import tflearn
 import tensorflow as tf
@@ -45,7 +48,7 @@ if train.lower() == "train":
             labels.append(intent['tag'])
 
     # Getting rid of duplicate words
-    words = [lemma.lemmatize(w.lower()) for w in words if w not in "?"]
+    words = [stemmer.stem(w.lower()) for w in words if w not in "?"]
     words = sorted(list(set(words)))
 
     labels = sorted(labels)
@@ -73,7 +76,7 @@ if train.lower() == "train":
         # Bag of words
         bag = []
 
-        wrds = [lemma.lemmatize(w) for w in doc]
+        wrds = [stemmer.stem(w) for w in doc]
 
         # Going through all the words
         for w in words:
@@ -136,7 +139,7 @@ def bag_of_words(s, words):
     bag = [0 for _ in range(len(words))]
 
     s_words = nltk.word_tokenize(s)
-    s_words = [lemma.lemmatize(word.lower()) for word in s_words if word not in "?"]
+    s_words = [stemmer.stem(word.lower()) for word in s_words if word not in "?"]
 
     for se in s_words:
         for i, w in enumerate(words):
@@ -146,7 +149,7 @@ def bag_of_words(s, words):
     return np.array(bag)
 
 def perform_lemmatization(tokens):
-    return [lemma.lemmatize(token) for token in tokens]
+    return [stemmer.stem(token) for token in tokens]
 
 
 def get_processed_text(doc):
@@ -208,8 +211,6 @@ def chat():
             likes_list.append(like)
             print("I enjoy {} too".format(like))
         else:
-            print("none found")
-
             # All this is going to give us a matrix of numbers where the numbers are probabilities of each class
             results = model.predict([bag_of_words(inp, words)])
             # Argmax will grab the index of highest probability in the matrix
@@ -230,7 +231,7 @@ def chat():
             tgt_cosine = cosine_similarity(doc_term_matrix, tgt_transform)
             tgt_cosine_list = list(tgt_cosine)
             i = tgt_cosine_list.index(max(tgt_cosine_list))
-            print(i)
+            print("tag: ", tag, " tg['tag']: ", tg['tag'])
             print(responses[i])
 
     # add to .json file with likes and dislikes
