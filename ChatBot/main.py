@@ -157,9 +157,9 @@ def farewell(name):
 #
 def add_defaults():
     data["intents"].append({
-                "tag": "thanks",
-                "patterns": ["Thanks", "Thank you"],
-                "responses": ["You're Welcome", "No problem"]
+        "tag": "thanks",
+        "patterns": ["Thanks", "Thank you"],
+        "responses": ["You're Welcome", "No problem"]
     })
     data["intents"].append({
         "tag": "agree",
