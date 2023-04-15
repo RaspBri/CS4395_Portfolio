@@ -21,7 +21,7 @@ import sys
 import os
 
 # REPLACE WHEN EXPIRES
-key = "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"
+key = "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"
 
 filename = sys.argv[1]
 print(filename)
@@ -29,7 +29,7 @@ print(filename)
 with open(filename) as file:
     data = json.load(file)
 
-train = input("Train the model type in (train): ")
+train = "train"
 # Data preprocessing start
 if train.lower() == "train":
     words = []
@@ -201,7 +201,7 @@ def use_openai(mood):
     )
     message = response.choices[0].message.content
     message = re.findall(r'"([^"]*)"', message)
-    print(message)
+    #print(message)
     return message
 
 
