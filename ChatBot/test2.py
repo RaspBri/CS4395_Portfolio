@@ -1,14 +1,4 @@
 
-
-# Get wikipedia h2 and set as tag name
-# take subheaders as patterns along with top words from h2 paragraph sections
-# Group paragraphs of header text into one section
-# lemmatize user input and wiki sentence/paragraph to get most accurate fact1
-# show user suggested sub topics to talk about
-# when user asks about subtopic, pull from selected subtopic and give information based on sine similarity and tdif vectorization
-# ask user if not coherent, if not translate through chatgpt
-# then add mood side of things
-
 import openai
 import re, string, random
 from textblob import TextBlob
@@ -17,33 +7,32 @@ from nltk.corpus import sentiwordnet as swn
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 # >>> pip install vaderSentiment
 
-def use_openai(topic):
-    openai.api_key = "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"
+def use_openai(mood):
+    openai.api_key = "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"
     model_engine = "gpt-3.5-turbo"
 
     # Use ChatGPT to get relevant wiki links about the user's interest
     response = openai.ChatCompletion.create(
         model = 'gpt-3.5-turbo',
         messages=[
-            {"role": "user", "content": ("Get 10 wikipedia links that tell me about " + topic)}
+            {"role": "user", "content": ("what are some phrases someone who is {} would say".format(mood))}
           ]
     )
     message = response.choices[0].message.content
-    file = open("links.txt", "a")
-    file.write(message)
-    file.close()
+    message = re.findall(r'"([^"]*)"', message)
+    print(message)
+    return message
 
 
-def choose_mood():
-    random_number = random.randint(1, 6)
-    if random_number == 1:
+def choose_mood(number):
+    if number == 1:
         mood = 'happy'
-    elif random_number == 2:
+    elif number == 2:
         mood = 'mad'
-    elif random_number == 3:
+    elif number == 3:
         mood = 'sad'
-    elif random_number == 4:
-        mood = 'sarcastic'
+    elif number == 4:
+        mood = 'mockery'
     else:
         mood = 'neutral'
     return mood
@@ -57,20 +46,39 @@ def sentiment(text):
     print("sentence was rated as ", sentiment_dict['neu'] * 100, "% Neutral")
     print("sentence was rated as ", sentiment_dict['pos'] * 100, "% Positive")
     print("Sentence Overall Rated As", end=" ")
-    # decide sentiment as positive, negative and neutral
-    if sentiment_dict['compound'] >= 0.05:
-        print("Positive")
-    elif sentiment_dict['compound'] <= - 0.05:
-        print("Negative")
-    else:
-        print("Neutral")
+
     return sentiment_dict['neg'], sentiment_dict['neu'], sentiment_dict['pos']
 
+def mock(user_input):
+    inp = list(user_input.lower())
+    for x in range(len(inp)):
+        if x % 2 == 0:
+            inp[x] = inp[x].lower()
+        else:
+            inp[x] = inp[x].upper()
 
-#vader_neg, vader_neu, vader_pos = sentiment("I like this")
-#print(vader_neg)
-#print(vader_neu)
-#print(vader_pos)
+    inp = ''.join(inp)
+    print(inp)
+
+
+user_input = "you give boring facts"
+
+vader_neg, vader_neu, vader_pos = sentiment(user_input)
+# decide sentiment as positive, negative and neutral
+if vader_pos >= 0.05:
+    print("Positive")
+    mood = 'happy'
+elif vader_neg <= - 0.05:
+    print("Negative")
+    mood = random.randint(2, 4)
+else:
+    print("Neutral")
+    mood = 'neutral'
+
 
 mood = choose_mood()
-print(mood)
+message_list = use_openai(mood)
+
+if mood == 'mockery':
+    mock(user_input)
+print(random.choice(message_list))
