@@ -1,8 +1,8 @@
 import nltk
 import sys
 
-def extract_clauses(text):
 
+def extract_clauses(text):
     sentences = nltk.sent_tokenize(text)
     clauses = []
 
@@ -22,12 +22,14 @@ def extract_clauses(text):
     return clauses
 
 text = sys.argv[1]
-print("Text:", text)
+#print("Text:", text)
 #text = "The history of houseplants is intertwined with the history of container gardening in general"
 if len(text) > 10:
     clauses = extract_clauses(text)
     clauses = [''.join(x) for x in zip(clauses[0::2], clauses[1::2])]
     if len(clauses) > 1:
-        print("That fact was a complex sentence!")
+        print("That fact was a complex sentence! Here is a list of the clauses from that fact: ")
+        for (i, item) in enumerate(clauses, start=1):
+            print(i, item)
     else:
         print("That fact was a simple sentence.")
