@@ -1,59 +1,46 @@
 # Use ChatGPT to get website links relating to the topic the user wants to discuss
 # Use links for webscraping to build corpus for chatbot
-"""import openai
-
-openai.api_key = "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"
-model_engine = "gpt-3.5-turbo"
-
-# Get user input for topic to discuss
-topic = "houseplants"
-
-# Use ChatGPT to get relevant wiki links about the user's interest
-response = openai.ChatCompletion.create(
-    model = 'gpt-3.5-turbo',
-    messages=[
-        {"role": "user", "content": ("Get 20 wikipedia links that tell me about " + topic)}
-      ]
-)
-message = response.choices[0].message.content
-file = open("links.txt", "a")
-file.write(message)
-file.close()
-#print(str(message))
-
-                                                    # Save jokes for later
-response = openai.ChatCompletion.create(
-    model = 'gpt-3.5-turbo',
-    messages=[
-        {"role": "user", "content": ("Tell me some jokes about " + topic)}
-      ]
-)
-"""
-import string
-
-"""
-To fix "unresolved reference" error for sklearn, run this command >>> pip install -U scikit-learn
-
-Run command in terminal before running >>> pip install nltk tensorflow tflearn
-INstall >>> pip install jsbeautifier
-"""
+import openai
 import re
 import requests
 from bs4 import BeautifulSoup
 from nltk import word_tokenize, sent_tokenize
 from nltk.corpus import stopwords
-import math
 import json
-import nltk
-from nltk.stem.lancaster import LancasterStemmer
-import numpy
-import tflearn
-import tensorflow
-import random
-import json
-import jsbeautifier
-import pickle
 import os
+import math
+
+
+
+
+
+"""
+To fix "unresolved reference" error for sklearn, run this command >>> pip install -U scikit-learn
+Run command in terminal before running >>> pip install nltk tensorflow tflearn
+Install >>> pip install jsbeautifier
+"""
+
+
+
+
+
+def use_openai(topic):
+    openai.api_key = "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"
+    model_engine = "gpt-3.5-turbo"
+
+    # Use ChatGPT to get relevant wiki links about the user's interest
+    response = openai.ChatCompletion.create(
+        model = 'gpt-3.5-turbo',
+        messages=[
+            {"role": "user", "content": ("Get 10 wikipedia links that tell me about " + topic)}
+          ]
+    )
+    message = response.choices[0].message.content
+    file = open("links.txt", "a")
+    file.write(message)
+    file.close()
+
+
 
 
 #
@@ -140,22 +127,9 @@ def add_intents(tag, temp_list, word_list):
         "responses": temp_list.split('.')
     })
 
-def greeting(name):
-    data["intents"].append({
-        "tag": "greeting",
-        "patterns": ["Hi", "Hello", "Hey"],
-        "responses": ["Hi, {}!".format(name), "Hello", "Hey", "Good to see you, {}".format(name)]
-    })
-
-def farewell(name):
-    data["intents"].append({
-        "tag": "goodbye",
-        "patterns": ["Bye", "Goodbye", "See you later"],
-        "responses": ["Nice chatting, bye", "Bye, {}".format(name), "Goodbye, {}".format(name)]
-    })
 
 #
-def add_defaults():
+def add_defaults(name):
     data["intents"].append({
         "tag": "thanks",
         "patterns": ["Thanks", "Thank you"],
@@ -171,6 +145,16 @@ def add_defaults():
         "patterns": ["No", "Never", "Eww", "Nah"],
         "responses": ["Oh, my bad.", "Apologies."]
     })
+    data["intents"].append({
+        "tag": "goodbye",
+        "patterns": ["Bye", "Goodbye", "See you later"],
+        "responses": ["Nice chatting, bye", "Bye, {}".format(name), "Goodbye, {}".format(name)]
+    })
+    data["intents"].append({
+        "tag": "greeting",
+        "patterns": ["Hi", "Hello", "Hey"],
+        "responses": ["Hi, {}!".format(name), "Hello", "Hey", "Good to see you, {}".format(name)]
+    })
 
 # skip over duplicate words adn omit the word "also"
 def check_list(word_list, seen):
@@ -185,51 +169,63 @@ def check_list(word_list, seen):
 
 # ---------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
-    # Read in links to files about user's interest
-    file = open("links.txt", "r")
-
-    # Get URLs from .txt file and save them to their own file
-    file_names = []
-    data = {"intents": []}
-
-    for line in file:
-        URL = (re.search("(?P<url>https?://[^\s]+)", line).group("url"))
-        page = requests.get(URL)
-        soup = BeautifulSoup(page.content, 'html.parser')
-        file_names.append((line.rsplit('/', 1)[-1]).strip() + ".txt")
-        #write_to_file(soup)                                                       # <= BE SURE TO MAKE LINE VISIBLE
-
-    vocab, tf_dict_list, idf_dict, all_words, term_weight_list, sentences = term_freq()
-    """
-    to traverse through most frequent words
-    term_weight_list[x] where x is the document index you wish to see
-    """
-
-    # Make contents for .json file
-    temp_list = ''
-    seen_list = []
-    for count in range(len(file_names)): # get to file
-        for i in range(len(term_weight_list[count])): # go through all words from term weight
-            for sentence in sentences: # get to sentence level
-                if term_weight_list[count][i][0] in sentence: # if word is found in sentence
-                    temp_list += sentence # add sentence to a list
-        word_list = (sorted(tf_dict_list[count].items(), key=lambda x: x[1], reverse=True))
-        word_list, seen_list_add = check_list(word_list, seen_list)
-        seen_list.append(seen_list_add)
-        add_intents(term_weight_list[count][i][0], temp_list, word_list[:5]) # add list of sentences to .json
-        temp_list = '' # clear list for next run
 
     print("Please enter your name...")
     name = input("You: ")
 
-    # write dict to .json
-    add_defaults()  # add default values to .json file
-    greeting(name.lower())
-    farewell(name.lower())
+    # validate user
+    if os.path.isfile('{}_data.json'.format(name)):
+        print("Hi, {}".format(name))
+        cmd = "python extractions.py {}_data.json".format(name)
+        os.system(cmd)
+    else:
+        # get topic from user
+        print("What is your favorite hobby? ")
+        hobby = input("You: ")
 
-    with open('{}_data.json'.format(name), 'w') as outfile:
-        json.dump(data, outfile, indent=4)
+        use_openai(hobby) # get links and save to .txt file
+        print("Ok, I will learn about this...please wait")
+        # Read in links to files about user's interest
+        file = open("links.txt", "r")
 
-    # get special filename
-    cmd = "python extractions.py {}_data.json".format(name)
-    os.system(cmd)
+        # Get URLs from .txt file and save them to their own file
+        file_names = []
+        data = {"intents": []}
+
+        for line in file:
+            URL = (re.search("(?P<url>https?://[^\s]+)", line).group("url"))
+            page = requests.get(URL)
+            soup = BeautifulSoup(page.content, 'html.parser')
+            file_names.append((line.rsplit('/', 1)[-1]).strip() + ".txt")
+            write_to_file(soup)
+
+        vocab, tf_dict_list, idf_dict, all_words, term_weight_list, sentences = term_freq()
+
+        """
+        to traverse through most frequent words
+        term_weight_list[x] where x is the document index you wish to see
+        """
+
+        # Make contents for .json file
+        temp_list = ''
+        seen_list = []
+        for count in range(len(file_names)): # get to file
+            for i in range(len(term_weight_list[count])): # go through all words from term weight
+                for sentence in sentences: # get to sentence level
+                    if term_weight_list[count][i][0] in sentence: # if word is found in sentence
+                        temp_list += sentence # add sentence to a list
+            word_list = (sorted(tf_dict_list[count].items(), key=lambda x: x[1], reverse=True))
+            word_list, seen_list_add = check_list(word_list, seen_list)
+            seen_list.append(seen_list_add)
+            add_intents(term_weight_list[count][i][0], temp_list, word_list[:5]) # add list of sentences to .json
+            temp_list = '' # clear list for next run
+
+        # write dict to .json
+        add_defaults(name.lower())  # add default values to .json file
+
+        with open('{}_data.json'.format(name), 'w') as outfile:
+            json.dump(data, outfile, indent=4)
+
+        # get special filename
+        cmd = "python extractions.py {}_data.json".format(name)
+        os.system(cmd)
