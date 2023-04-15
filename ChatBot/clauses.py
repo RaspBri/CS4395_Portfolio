@@ -22,7 +22,8 @@ def extract_clauses(text):
     return clauses
 
 text = sys.argv[1]
-
+print("Text:", text)
+#text = "The history of houseplants is intertwined with the history of container gardening in general"
 if len(text) > 10:
     clauses = extract_clauses(text)
     clauses = [''.join(x) for x in zip(clauses[0::2], clauses[1::2])]
