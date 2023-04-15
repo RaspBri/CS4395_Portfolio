@@ -20,7 +20,7 @@ Install >>> pip install jsbeautifier
 """
 
 # REPLACE WHEN EXPIRES
-key = "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"
+key = "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"
 
 
 def use_openai(topic):
@@ -180,15 +180,20 @@ if __name__ == '__main__':
     # validate user
     if os.path.isfile('{}_data.json'.format(name)):
         print("Hi, {}".format(name))
+        with open(('{}_data.json'.format(name))) as file:
+            data = json.load(file)
         cmd = "python extractions.py {}_data.json".format(name)
 
         responses = []
         for tg in data["intents"]:
             if tg['tag'] == 'likes':
-                responses = tg['responses']
-        if len(responses) > 1: # if you previously told a like and dislike
-            likes = random.choice(responses)
-            print("Welcome back! I remember last time you said you liked {}, did you get around to that after we chatted?".format(likes))
+                responses_likes = tg['responses']
+            elif tg['tag'] == 'dislikes':
+                responses_dislikes = tg['responses']
+        if len(responses_likes) > 0: # if you previously told a like and dislike
+            print("Welcome back! I remember last time you said you liked {}, did you get around to that after we chatted?".format(random.choice(responses_likes)))
+        if len(responses_dislikes) > 0:
+            print("Also, I hope you stayed away from {}".format(random.choice(responses_dislikes)))
         os.system(cmd)
     else:
         # get topic from user
