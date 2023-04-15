@@ -12,7 +12,6 @@ import math
 import random
 
 
-
 """
 To fix "unresolved reference" error for sklearn, run this command >>> pip install -U scikit-learn
 Run command in terminal before running >>> pip install nltk tensorflow tflearn
@@ -20,7 +19,7 @@ Install >>> pip install jsbeautifier
 """
 
 # REPLACE WHEN EXPIRES
-key = "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"
+key = "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"
 
 
 def use_openai(topic):
@@ -38,8 +37,6 @@ def use_openai(topic):
     file = open("links.txt", "a")
     file.write(message)
     file.close()
-
-
 
 
 #
@@ -192,7 +189,7 @@ if __name__ == '__main__':
                 responses_dislikes = tg['responses']
         if len(responses_likes) > 0: # if you previously told a like and dislike
             likes = random.choice(responses_likes)
-            print("Welcome back! I remember last time you said you liked {}, I hope you and {} cossed paths after we chatted!".format(likes, likes))
+            print("Welcome back! I remember last time you said you liked {}, I hope you and {} crossed paths after we chatted!".format(likes, likes))
         if len(responses_dislikes) > 0:
             print("Also, I hope you stayed away from {}.".format(random.choice(responses_dislikes)))
         os.system(cmd)
