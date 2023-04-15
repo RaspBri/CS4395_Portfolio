@@ -351,7 +351,7 @@ def chat():
             print(responses[i])
 
             text = responses[i]
-            cmd = "python clauses.py {}".format(responses[i]) # get clauses
+            cmd = "python clauses.py \"{}\"".format(responses[i]) # get clauses
             os.system(cmd)
 
         chat_count += 1
