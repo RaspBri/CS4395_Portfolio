@@ -191,7 +191,8 @@ if __name__ == '__main__':
             elif tg['tag'] == 'dislikes':
                 responses_dislikes = tg['responses']
         if len(responses_likes) > 0: # if you previously told a like and dislike
-            print("Welcome back! I remember last time you said you liked {}, I hope you got around to it after we chatted!".format(random.choice(responses_likes)))
+            likes = random.choice(responses_likes)
+            print("Welcome back! I remember last time you said you liked {}, I hope you and {} cossed paths after we chatted!".format(likes, likes))
         if len(responses_dislikes) > 0:
             print("Also, I hope you stayed away from {}.".format(random.choice(responses_dislikes)))
         os.system(cmd)
