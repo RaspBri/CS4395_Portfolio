@@ -223,6 +223,7 @@ def chat():
 
             #print(random.choice(responses))
             #generate_response(inp, responses.lower())
+
             tfidf_vectorizer = TfidfVectorizer()
             sparse_matrix = tfidf_vectorizer.fit_transform(responses)
             doc_term_matrix = sparse_matrix.toarray()
@@ -231,7 +232,6 @@ def chat():
             tgt_cosine = cosine_similarity(doc_term_matrix, tgt_transform)
             tgt_cosine_list = list(tgt_cosine)
             i = tgt_cosine_list.index(max(tgt_cosine_list))
-            print("tag: ", tag, " tg['tag']: ", tg['tag'])
             print(responses[i])
 
     # add to .json file with likes and dislikes
