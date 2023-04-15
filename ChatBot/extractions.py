@@ -21,7 +21,7 @@ import sys
 import os
 
 # REPLACE WHEN EXPIRES
-key = "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"
+key = "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"
 
 filename = sys.argv[1]
 print(filename)
@@ -246,13 +246,13 @@ def user_checkin(user_fun_rating):
 
     # decide sentiment as positive, negative and neutral
     if vader_pos >= 0.05:
-        print("Positive")
+        #print("Positive")
         mood = 1
     elif vader_neg >= 0.05:
-        print("Negative")
+        #print("Negative")
         mood = random.randint(2, 4)
     else:
-        print("Neutral")
+        #print("Neutral")
         mood = 5
 
     mood = choose_mood(mood)
