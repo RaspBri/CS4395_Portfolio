@@ -9,6 +9,7 @@ from nltk.corpus import stopwords
 import json
 import os
 import math
+import random
 
 
 
@@ -25,7 +26,7 @@ Install >>> pip install jsbeautifier
 
 
 def use_openai(topic):
-    openai.api_key = "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"
+    openai.api_key = "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"
     model_engine = "gpt-3.5-turbo"
 
     # Use ChatGPT to get relevant wiki links about the user's interest
@@ -51,7 +52,6 @@ def write_to_file(soup):
         text = re.sub(r'\[\d+\]', '', text)  # remove mini reference numbers from lines
         f = open((URL.rsplit('/', 1)[-1]) + '.txt', "a") # read page name from URL
         f.write(text)
-
 
 #
 def create_tf_dict(doc):
@@ -136,6 +136,11 @@ def add_defaults(name):
         "responses": ["You're Welcome", "No problem"]
     })
     data["intents"].append({
+        "tag": "mood",
+        "patterns": ["How are you?", "What's up?"],
+        "responses": ["I am a bot."]
+    })
+    data["intents"].append({
         "tag": "agree",
         "patterns": ["Yes", "Yea", "Sure", "Ok"],
         "responses": ["Awesome!", "Love to hear it!"]
@@ -169,6 +174,7 @@ def check_list(word_list, seen):
 
 # ---------------------------------------------------------------------------------------------------------------------
 if __name__ == '__main__':
+    data = {"intents": []}
 
     print("Please enter your name...")
     name = input("You: ")
@@ -177,6 +183,13 @@ if __name__ == '__main__':
     if os.path.isfile('{}_data.json'.format(name)):
         print("Hi, {}".format(name))
         cmd = "python extractions.py {}_data.json".format(name)
+
+        responses = []
+        for tg in data["intents"]:
+            if tg['tag'] == 'likes':
+                responses = tg['responses']
+        likes = random.choice(responses)
+        print("Welcome back! I remember last time you said you liked {}, did you get around to that after we chatted?".format(likes))
         os.system(cmd)
     else:
         # get topic from user
@@ -190,7 +203,7 @@ if __name__ == '__main__':
 
         # Get URLs from .txt file and save them to their own file
         file_names = []
-        data = {"intents": []}
+
 
         for line in file:
             URL = (re.search("(?P<url>https?://[^\s]+)", line).group("url"))
@@ -198,7 +211,6 @@ if __name__ == '__main__':
             soup = BeautifulSoup(page.content, 'html.parser')
             file_names.append((line.rsplit('/', 1)[-1]).strip() + ".txt")
             write_to_file(soup)
-
         vocab, tf_dict_list, idf_dict, all_words, term_weight_list, sentences = term_freq()
 
         """
