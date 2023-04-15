@@ -13,20 +13,18 @@ import random
 
 
 
-
-
 """
 To fix "unresolved reference" error for sklearn, run this command >>> pip install -U scikit-learn
 Run command in terminal before running >>> pip install nltk tensorflow tflearn
 Install >>> pip install jsbeautifier
 """
 
-
-
+# REPLACE WHEN EXPIRES
+key = "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"
 
 
 def use_openai(topic):
-    openai.api_key = "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"
+    openai.api_key = key
     model_engine = "gpt-3.5-turbo"
 
     # Use ChatGPT to get relevant wiki links about the user's interest
@@ -188,8 +186,9 @@ if __name__ == '__main__':
         for tg in data["intents"]:
             if tg['tag'] == 'likes':
                 responses = tg['responses']
-        likes = random.choice(responses)
-        print("Welcome back! I remember last time you said you liked {}, did you get around to that after we chatted?".format(likes))
+        if len(responses) > 1: # if you previously told a like and dislike
+            likes = random.choice(responses)
+            print("Welcome back! I remember last time you said you liked {}, did you get around to that after we chatted?".format(likes))
         os.system(cmd)
     else:
         # get topic from user
