@@ -20,7 +20,7 @@ Install >>> pip install jsbeautifier
 """
 
 # REPLACE WHEN EXPIRES
-key = "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"
+key = "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"
 
 
 def use_openai(topic):
