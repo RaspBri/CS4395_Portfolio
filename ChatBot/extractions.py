@@ -12,17 +12,16 @@ import tflearn
 from tensorflow.python.framework import ops
 import json
 import pickle
-import sys
 import openai
 import re, random
 import spacy
 nlp = spacy.load('en_core_web_sm')
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import sys
-sys.setrecursionlimit(100000)
+import os
 
 # REPLACE WHEN EXPIRES
-key = "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"
+key = "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"
 
 filename = sys.argv[1]
 print(filename)
@@ -352,7 +351,7 @@ def chat():
             print(responses[i])
 
             text = responses[i]
-            cmd = "python clauses.py {}".format(responses[i])
+            cmd = "python clauses.py {}".format(responses[i]) # get clauses
             os.system(cmd)
 
         chat_count += 1
