@@ -1,27 +1,24 @@
 # Source Credit for tensorflow skeleton code, I added the rest
 # https://www.pycodemates.com/2021/11/build-a-AI-chatbot-using-python-and-deep-learning.html
 import string
-from urllib import response
 import nltk
-import spacy
-from sklearn.metrics.pairwise import cosine_similarity
 nltk.download('punkt')
-from nltk.stem import WordNetLemmatizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
-#lemma = WordNetLemmatizer()
 from nltk.stem.lancaster import LancasterStemmer
 stemmer = LancasterStemmer()
 
 import numpy as np
 import tflearn
-import tensorflow as tf
 from tensorflow.python.framework import ops
-import random
 import json
 import pickle
 import sys
+
+import openai
+import re, random
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
 filename = sys.argv[1]
 print(filename)
@@ -188,19 +185,112 @@ def add_dislikes(dislikes_list):
         "responses": dislikes_list
     })
 
+def use_openai(mood):
+    openai.api_key = "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"
+    model_engine = "gpt-3.5-turbo"
+
+    # Use ChatGPT to get relevant wiki links about the user's interest
+    response = openai.ChatCompletion.create(
+        model = 'gpt-3.5-turbo',
+        messages=[
+            {"role": "user", "content": ("what are some phrases someone who is {} would say. Play the role of a hard worker with these emotions".format(mood))}
+          ]
+    )
+    message = response.choices[0].message.content
+    message = re.findall(r'"([^"]*)"', message)
+    print(message)
+    return message
+
+
+def choose_mood(number):
+    if number == 1:
+        mood = 'happy'
+    elif number == 2:
+        mood = 'mad'
+    elif number == 3:
+        mood = 'sad'
+    elif number == 4:
+        mood = 'mockery'
+    else:
+        mood = 'neutral'
+    return mood
+
+def sentiment(text):
+    sid_obj = SentimentIntensityAnalyzer()
+    sentiment_dict = sid_obj.polarity_scores(text)
+
+    print("Overall sentiment dictionary is : ", sentiment_dict)
+    print("sentence was rated as ", sentiment_dict['neg'] * 100, "% Negative")
+    print("sentence was rated as ", sentiment_dict['neu'] * 100, "% Neutral")
+    print("sentence was rated as ", sentiment_dict['pos'] * 100, "% Positive")
+    print("Sentence Overall Rated As", end=" ")
+
+    return sentiment_dict['neg'], sentiment_dict['neu'], sentiment_dict['pos']
+
+def mock(user_input):
+    inp = list(user_input.lower())
+    for x in range(len(inp)):
+        if x % 2 == 0:
+            inp[x] = inp[x].lower()
+        else:
+            inp[x] = inp[x].upper()
+
+    inp = ''.join(inp)
+    print(inp)
+
+def user_checkin(user_fun_rating):
+    vader_neg, vader_neu, vader_pos = sentiment(user_fun_rating)
+
+    # decide sentiment as positive, negative and neutral
+    if vader_pos >= 0.05:
+        print("Positive")
+        mood = 1
+    elif vader_neg >= 0.05:
+        print("Negative")
+        mood = random.randint(2, 4)
+    else:
+        print("Neutral")
+        mood = 5
+
+    mood = choose_mood(mood)
+    message_list = use_openai(mood)
+
+    if mood == 'mockery':
+        mock(user_fun_rating)
+    print(random.choice(message_list))
+
+
+
 # Generate user input
 def chat():
     # user input
     print("Start talking with bot!(type 'quit' to stop)")
     likes_list = []
     dislikes_list = []
+    chat_count = 0
 
     while True:
+
         inp = input("You: ")
         if inp.lower() == "quit":
             break
+        if chat_count == 5:
+            print("Are you having fun?")
+            user_fun_rating = input("You: ")
+            user_checkin(user_fun_rating)
 
-        if 'dislike' in inp:
+            print("Are you ready to get back to learning? (y/n)")
+            learn_again = input("You: ")
+            if learn_again == 'y':
+                print("Let's get back to learning.")
+            elif learn_again == 'n':
+                print("What would you rather do?")
+                user_fun_rating = input("You: ")
+                user_checkin(user_fun_rating)
+                print("Let's get back to learning.")
+            chat_count = 0
+
+        elif 'dislike' in inp:
             dislike = inp
             dislike = dislike.rsplit('dislike ', 1)[1]
             dislikes_list.append(dislike)
@@ -210,19 +300,17 @@ def chat():
             like = like.rsplit('like ', 1)[1]
             likes_list.append(like)
             print("I enjoy {} too".format(like))
+
         else:
             # All this is going to give us a matrix of numbers where the numbers are probabilities of each class
             results = model.predict([bag_of_words(inp, words)])
-            # Argmax will grab the index of highest probability in the matrix
+            # Argmax will grab the index of largest probability in the matrix
             results_index = np.argmax(results)
             tag = labels[results_index]
 
             for tg in data["intents"]:
                 if tg['tag'] == tag:
                     responses = tg['responses']
-
-            #print(random.choice(responses))
-            #generate_response(inp, responses.lower())
 
             tfidf_vectorizer = TfidfVectorizer()
             sparse_matrix = tfidf_vectorizer.fit_transform(responses)
@@ -233,6 +321,7 @@ def chat():
             tgt_cosine_list = list(tgt_cosine)
             i = tgt_cosine_list.index(max(tgt_cosine_list))
             print(responses[i])
+        chat_count += 1
 
     # add to .json file with likes and dislikes
     if len(likes_list) > 0:
