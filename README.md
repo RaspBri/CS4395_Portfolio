@@ -1,5 +1,16 @@
 # CS4395_Portfolio
 
+## Skills Gained:
+* Devleoped text representation techniques
+* Gained insight on statistical analysis aproaches
+* Learned how to create machine learning models for NLP training
+* Expanded creative problem solving abilities
+
+## Human Language Techonogies Course Reflection
+Before I took this class I knew vary little about natural language processing. After taking this course I have learned about speech processing and information retrieval/extraction. I for sure have developed an interest in the field of NLP now that I have taken this class and would like to explore more the field, possibly within my own career path or just as a side interest. To keep up with the field I think the best way would be to make and maintain connections with people currently in this space already so that I can see first hand what someone in this field is doing with NLP. My heart is in cybersecurity, so if there is a way to incorporate cyber and NLP I could see myself exploring that side of computer science in the future.
+
+---
+
 ## Assignment 0
 This assignment is about setting up my Github portfolio and opening thoughts about natural language processing.
 You can view my first assignment as a PDF [here](Overview_of_NLP.pdf).
